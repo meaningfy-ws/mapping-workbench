@@ -11,6 +11,7 @@ from mapping_workbench.backend.core.services.io import sanitize_filename
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, StructuralElementState, \
     StructuralElementABC
 from mapping_workbench.backend.file_resource.models.file_resource import FileResourceFormat
+from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
 from mapping_workbench.backend.ontology.services.namespaces import get_prefixes_definitions
 from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertionCondition
@@ -35,7 +36,8 @@ def get_sparql_prefixes(sparql_q: str) -> list:
 
 
 def generate_subject_type_for_cm_assertion(class_path: str) -> str:
-    subject_reference = class_path.split(' / ')[0]
+    class_path_parts = class_path.split(' / ')
+    subject_reference = class_path_parts[0] if len(class_path_parts) > 0 else ''
     return f"?this rdf:type {subject_reference} ." if subject_reference else ''
 
 
@@ -61,8 +63,15 @@ def get_sparql_content_for_cm_assertion(
     sparql_description = ", ".join(structural_element.descriptions or [])
     sparql_xpath = structural_element.absolute_xpath
 
+    if not cm_rule.target_property_path:
+        m = f"Missing Property Path for {structural_element.sdk_element_id}"
+        mwb_logger.log_all_error(m)
+        raise ValueError(m)
+
     subject_type = generate_subject_type_for_cm_assertion(cm_rule.target_class_path) \
-        if cm_rule.target_class_path and '?this' in cm_rule.target_property_path else ''
+        if cm_rule.target_class_path and (
+            cm_rule.target_property_path and '?this' in cm_rule.target_property_path
+    ) else ''
 
     prefixes_string = cm_rule.target_property_path
     if subject_type:
@@ -267,14 +276,12 @@ async def generate_cm_assertions_queries_for_package_state(mapping_package_state
             continue
 
         structural_element: StructuralElementState = cm_rule.source_structural_element
-
         sdk_id = structural_element.sdk_element_id
         grouped_cm_rules[sdk_id].append(cm_rule)
         rule_element_idx = len(grouped_cm_rules[sdk_id])
         # sparql_idx = cm_rule.oid
         sparql_idx = generate_sparql_file_idx(cm_rule, structural_element, rule_element_idx)
         sparql_title = f"{sdk_id}"
-
         file_name = f"{sanitize_filename(rq_name + sparql_idx)}.rq"
         file_content = get_sparql_content_for_cm_assertion(
             cm_rule=cm_rule,
@@ -282,7 +289,6 @@ async def generate_cm_assertions_queries_for_package_state(mapping_package_state
             sparql_title=sparql_title,
             prefixes_definitions=prefixes_definitions
         )
-
         cm_rule_sdk_element = SPARQLCMRule(
             sdk_element_id=sdk_id,
             sdk_element_title=structural_element.name,
