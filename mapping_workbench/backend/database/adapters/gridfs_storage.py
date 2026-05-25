@@ -28,6 +28,7 @@ class AsyncGridFSStorage:
         Gets the mongo database to use for the gridfs storage.
         :return: The mongo database to use for the gridfs storage.
         """
+
         if cls._mongo_database is None:
             from mapping_workbench.backend.database.adapters.mongodb import DB
             cls._mongo_database = DB.get_database()
