@@ -38,6 +38,8 @@ export const PackageImporter = ({onClose, open = false, sectionApi}) => {
         nProgress.start();
 
         const incStep = 100 / files.length;
+        const runAsTask = files.length === 1;
+
         let formData;
         for (let file of files) {
             formData = new FormData();
@@ -46,26 +48,23 @@ export const PackageImporter = ({onClose, open = false, sectionApi}) => {
             formData.append("trigger_package_processing", triggerPackageProcessing);
             formData.append("cleanup_project", cleanupProject);
             formData.append("project", sessionApi.getSessionProject());
+            formData.append("run_as_task", runAsTask);
             const toastId = toastLoad(`Importing "${file.name}" ... `)
             try {
                 const res = await sectionApi.importPackage(formData);
-                if (triggerPackageProcessing) {
-                    toastSuccess(`"${res?.mapping_package?.title}" successfully imported.`, toastId);
-                    if (triggerPackageProcessing && res?.mapping_package && res.mapping_package?._id) {
-                        const procToastId = toastLoad(`Processing "${res.mapping_package.identifier}" ... This may take a while. Please, be patient.`)
-                        try {
-                            const procData = {
-                                package_id: res.mapping_package._id,
-                                project_id: sessionApi.getSessionProject()
-                            }
-                            const procRes = await sectionApi.processPackage(procData);
-                            toastSuccess(`${procRes.task_name} successfully started.`, procToastId);
-                        } catch (err) {
-                            toastError(err, procToastId);
+                toastSuccess(`"${res?.mapping_package?.title}" successfully imported.`, toastId);
+                if (triggerPackageProcessing && res?.mapping_package && res.mapping_package?._id) {
+                    const procToastId = toastLoad(`Processing "${res.mapping_package.identifier}" ... This may take a while. Please, be patient.`)
+                    try {
+                        const procData = {
+                            package_id: res.mapping_package._id,
+                            project_id: sessionApi.getSessionProject()
                         }
+                        const procRes = await sectionApi.processPackage(procData);
+                        toastSuccess(`${procRes.task_name} successfully started.`, procToastId);
+                    } catch (err) {
+                        toastError(err, procToastId);
                     }
-                } else {
-                    toastSuccess(`${res.task_name} successfully started.`, toastId);
                 }
             } catch (err) {
                 toastError(`Importing "${file.name}" failed: ${err.message}.`, toastId);
