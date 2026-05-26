@@ -15,6 +15,8 @@ import {LocalHighlighter} from "../../components/local-highlighter";
 import {paths} from "../../../paths";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import Tooltip from "@mui/material/Tooltip";
+import {useState} from "react";
+import Switch from "@mui/material/Switch";
 
 
 const XPathElements = (props) => {
@@ -27,6 +29,16 @@ const XPathElements = (props) => {
         sparql_query_results = null,
         ...other
     } = props;
+    const [hideNamespaces, setHideNamespaces] = useState(true);
+
+    const stripNamespaces = (xml) => {
+        // Remove xmlns declarations
+        let noXmlns = xml.replace(/\s+xmlns(:\w+)?="[^"]*"/g, '');
+        // Remove prefixes from tags (e.g., cbc:Tag -> Tag)
+        noXmlns = noXmlns.replace(/<\/*(\w+):/g, match => match.replace(/:(?=[^:]*$)/, ''));
+        return noXmlns;
+    };
+
     const elementsDialog = useDialog()
     const syntaxHighlighterTheme = useHighlighterTheme()
 
@@ -132,7 +144,16 @@ const XPathElements = (props) => {
                                                             </SyntaxHighlighter>
                                                         </Box>
                                                         <Box sx={{pt: 1}}>
-                                                            <Typography variant="h8">Element:</Typography>
+                                                            <Box sx={{pt: 1, display: 'flex', alignItems: 'center', gap: 1}}>
+                                                                <Typography variant="h8">Element:</Typography>
+                                                                <Switch
+                                                                    checked={hideNamespaces}
+                                                                    onChange={e => setHideNamespaces(e.target.checked)}
+                                                                    id={`hide-ns-${i}`}
+                                                                    size="small"
+                                                                />
+                                                                <label htmlFor={`hide-ns-${i}`}>Hide namespaces</label>
+                                                            </Box>
                                                             <SyntaxHighlighter
                                                                 language="xml"
                                                                 wrapLines
@@ -144,7 +165,7 @@ const XPathElements = (props) => {
                                                                         whiteSpace: 'pre-wrap'
                                                                     }
                                                                 }}>
-                                                                {xpath.element}
+                                                                {hideNamespaces ? stripNamespaces(xpath.element) : xpath.element}
                                                             </SyntaxHighlighter>
                                                         </Box>
                                                         <Divider sx={{my: 1}}/>

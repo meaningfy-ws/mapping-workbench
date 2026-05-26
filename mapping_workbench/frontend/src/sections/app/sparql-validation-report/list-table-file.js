@@ -112,18 +112,19 @@ export const ListTableFile = (props) => {
                                                    fieldName="xpath_condition_query"
                                                    title="XPath Condition"/>
                             </TableCell>
-                            <TableCell width='30%'>
-                                <SorterHeader fieldName="description"
-                                              title=""/>
-                            </TableCell>
                             <TableCell>
-                                <SorterHeader fieldName="query"
-                                              title="Query"/>
+                                <TableFilterHeader sort={sort}
+                                                   onSort={onSort}
+                                                   onFilter={onFilter}
+                                                   filters={filters}
+                                                   fieldName="query"
+                                                   title="Query"/>
                             </TableCell>
                             <TableCell align="left">
                                 {isResultSortable ? <SorterHeader fieldName="result"
                                                                   title="result"/> : 'Result'}
                             </TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -190,7 +191,7 @@ export const ListTableFile = (props) => {
                                                     <XPathElements element_id={item.sdk_element_id}
                                                                    element_xpath={item.element_xpath}
                                                                    test_data_xpaths={[item.test_data]}
-                                                                   sparql_query={item.query}
+                                                                   sparql_query={item.select_query}
                                                                    sparql_query_results={item.query_results}
                                                     />
                                                 </Box>
@@ -211,7 +212,7 @@ export const ListTableFile = (props) => {
                                     <TableCell align="left">
                                         <Box>
                                             <Condition text='Fields covered:'
-                                                       value={item.fields_covered}/>
+                                                       value={item.fields_covered + (item?.test_data?.xpaths?.length > 0 ? " (" + item.test_data.xpaths.length + ")" : "")}/>
                                             <Divider sx={{my: 1}}/>
                                             <Condition text='XPath condition fulfilled:'
                                                        value={item?.xpath_condition?.xpath_condition ? item?.meets_xpath_condition : 'N/A'}

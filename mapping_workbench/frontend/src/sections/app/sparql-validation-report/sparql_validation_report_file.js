@@ -84,7 +84,7 @@ const SparqlFileReport = ({sid, suiteId, testId, handleExport}) => {
                             onFilter={itemsSearch.handleFiltersChange}
                             filters={itemsSearch.state.filters}
                             sectionApi={sectionApi}
-                            isResultSortable={false}
+                            isResultSortable={true}
                             updateItems={setValidationReport}
                             listItems={itemsSearch.filteredItems}
                         />

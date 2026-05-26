@@ -141,6 +141,7 @@ export const mapSparqlResultEntry = (resultEntry) => {
 
 export const mapSparqlResults = (result) => result.map(e => {
     const queryAsArray = e.query?.content.split("\n")
+    const selectQueryAsArray = e.query?.query?.split("\n")
     const values = queryAsArray.slice(0, 3)
     const resultArray = {}
     values.forEach(value => {
@@ -148,6 +149,7 @@ export const mapSparqlResults = (result) => result.map(e => {
         resultArray[res[0].substring(1)] = res[1]
     })
     resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
+    resultArray["select_query"] = selectQueryAsArray?.slice(4, queryAsArray.length).join("\n")
     resultArray["validation_element_id"] = e.validation_element_id
     resultArray["test_suite"] = e.query?.filename
     resultArray["result"] = e.result

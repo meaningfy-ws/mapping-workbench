@@ -19,7 +19,6 @@ export const ListSelectorSelect = (props) => {
         valuesFilters = {},
         ...other
     } = props;
-
     const [stateValues, setStateValues] = useState([]);
     const [projectValues, setProjectValues] = useState(initProjectValues || []);
     const [valuesMap, setValuesMap] = useState({});
@@ -27,6 +26,12 @@ export const ListSelectorSelect = (props) => {
     useEffect(() => {
         setStateValues(listValues);
     }, [JSON.stringify(listValues)]);
+
+    useEffect(() => {
+        if (initProjectValues !== null) {
+            setProjectValues(initProjectValues);
+        }
+    }, [initProjectValues]);
 
     useEffect(() => {
         (async () => {
