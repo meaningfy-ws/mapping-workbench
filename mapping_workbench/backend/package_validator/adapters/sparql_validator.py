@@ -58,12 +58,20 @@ class SPARQLValidator(TestDataValidator):
                 )
             )
             try:
-                sparql_query_result.query_result = bool(self.rdf_graph.query(sparql_query.content))
+                query_result = self.rdf_graph.query(sparql_query.query)
+
+                if getattr(query_result, 'type', None) == 'SELECT':
+                    sparql_query_result.query_results = [
+                        row.asdict() for row in query_result
+                    ]
+                    sparql_query_result.query_result = bool(sparql_query_result.query_results)
+                else:
+                    sparql_query_result.query_result = bool(query_result)
                 self.process_sparql_result(sparql_query_result)
             except Exception as e:
                 sparql_query_result.error = str(e)[:100]
                 sparql_query_result.result = SPARQLQueryRefinedResultType.ERROR.value
-                mwb_logger.log_all_error(message=f"ERROR :: SPARQL Validation :: Q:\n{sparql_query.content}\nStack trace:", stack_trace=str(e))
+                mwb_logger.log_all_error(message=f"ERROR :: SPARQL Validation :: Q:\n{sparql_query.query}\nStack trace:", stack_trace=str(e))
 
             results.append(sparql_query_result)
 

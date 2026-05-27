@@ -167,8 +167,10 @@ def dummy_sparql_test_suite(sparql_test_resources_file_path: pathlib.Path,
         eforms_sdk_element_id=None,
         eforms_sdk_element_title=metadata['title']
     )
+    query = sparql_test_resources_file_path.read_text(encoding="utf-8")
     return SPARQLTestState(
-        content=sparql_test_resources_file_path.read_text(encoding="utf-8"),
+        content=query,
+        query=query,
         filename=sparql_test_resources_file_path.name,
         format=SPARQLTestFileResourceFormat.RQ,
         cm_rule=cm_rule_sdk_element

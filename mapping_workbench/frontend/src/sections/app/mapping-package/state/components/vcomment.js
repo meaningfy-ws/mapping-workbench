@@ -180,7 +180,7 @@ export const ValidationComments = (props) => {
     return (
         <Card sx={{my: 2, p: 0}}>
             <CardContent sx={{p: 2, m: 0}}>
-                {comments.length > 0 && <Box style={{overflow: 'auto', maxHeight: '40vh'}}>
+                {comments.length > 0 && <><Box style={{overflow: 'auto', maxHeight: '40vh'}}>
                     {comments.map(
                         (comment, idx) => <ValidationComment
                             key={idx}
@@ -189,8 +189,7 @@ export const ValidationComments = (props) => {
                             onDelete={handleDeleteComment}
                         />
                     )}
-                    <Divider sx={{my: 2}}/>
-                </Box>}
+                </Box><Divider sx={{mb: 2}}/></>}
                 <form onSubmit={formik.handleSubmit}
                       {...other}>
                     <Grid xs={12}
@@ -276,18 +275,18 @@ export const ValidationComments = (props) => {
                             />
                         </Box>
                         <Divider/>
-                        <FormControlLabel
-                            sx={{width: '100%', p: 0, m: 0}}
-                            control={
-                                <Checkbox
-                                    checked={formik.values.use_in_state}
-                                    onChange={(event) => formik.setFieldValue('use_in_state', event.target.checked)}
-                                />
-                            }
-                            label="Use in this State"
-                            value=""
-                        />
-                        <Divider/>
+                        {/*<FormControlLabel*/}
+                        {/*    sx={{width: '100%', p: 0, m: 0}}*/}
+                        {/*    control={*/}
+                        {/*        <Checkbox*/}
+                        {/*            checked={formik.values.use_in_state}*/}
+                        {/*            onChange={(event) => formik.setFieldValue('use_in_state', event.target.checked)}*/}
+                        {/*        />*/}
+                        {/*    }*/}
+                        {/*    label="Use in this State"*/}
+                        {/*    value=""*/}
+                        {/*/>*/}
+                        {/*<Divider/>*/}
                     </Stack>
                     <Stack
                         direction={{

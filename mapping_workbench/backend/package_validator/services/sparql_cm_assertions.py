@@ -54,19 +54,49 @@ def get_sparql_prefix_line_for_cm_assertion(prefixes_string: str, prefixes_defin
     return prefixes
 
 
+def render_sparql_template(
+        sparql_title: str,
+        sparql_description: str | None,
+        sparql_xpath: str,
+        prefixes: list[str],
+        subject_type_display: str,
+        cm_rule,
+        query_keyword: str,  # "SELECT *" or "ASK"
+) -> str:
+    description_part = (
+        f"“{sparql_description}” " if sparql_description else ""
+    )
+    header = (
+            f"#title: {sparql_title}\n"
+            f"#description: {description_part}"
+            f"The corresponding XML element is {sparql_xpath}. \n"
+            f"#xpath: {sparql_xpath}\n\n"
+            + "\n".join(prefixes)
+            + "\n\n"
+    )
+
+    return (
+            header
+            + f"{query_keyword} WHERE {{ "
+              f"{subject_type_display}"
+              f"\n\t{cm_rule.target_property_path} \n}}"
+    )
+
+
 def get_sparql_content_for_cm_assertion(
         cm_rule: ConceptualMappingRuleABC,
         structural_element: StructuralElementABC,
         sparql_title: str,
         prefixes_definitions: Dict
-) -> str:
-    sparql_description = ", ".join(structural_element.descriptions or [])
-    sparql_xpath = structural_element.absolute_xpath
+) -> (str, str):
 
     if not cm_rule.target_property_path:
         m = f"Missing Property Path for {structural_element.sdk_element_id}"
         mwb_logger.log_all_error(m)
         raise ValueError(m)
+
+    sparql_description = ", ".join(structural_element.descriptions or [])
+    sparql_xpath = structural_element.absolute_xpath
 
     subject_type = generate_subject_type_for_cm_assertion(cm_rule.target_class_path) \
         if cm_rule.target_class_path and (
@@ -84,21 +114,26 @@ def get_sparql_content_for_cm_assertion(
 
     subject_type_display = ('\n\t' + subject_type) if subject_type else ''
 
-    return (
-            f"#title: {sparql_title}\n"
-            f"#description: "
-            f"{f'“{sparql_description}” ' if sparql_description else ''}"
-            f"The corresponding XML element is "
-            f"{sparql_xpath}. "
-            # f"The expected ontology instances are epo: {cm_rule.target_class_path} ."
-            f"\n"
-            f"#xpath: {sparql_xpath}"
-            "\n" + "\n" + "\n".join(prefixes) +
-            "\n\n" +
-            f"ASK WHERE {{ "
-            f"{subject_type_display}"
-            f"\n\t{cm_rule.target_property_path} \n}}"
+    select_query = render_sparql_template(
+        sparql_title,
+        sparql_description,
+        sparql_xpath,
+        prefixes,
+        subject_type_display,
+        cm_rule,
+        query_keyword="SELECT *",
     )
+
+    ask_query = render_sparql_template(
+        sparql_title,
+        sparql_description,
+        sparql_xpath,
+        prefixes,
+        subject_type_display,
+        cm_rule,
+        query_keyword="ASK",
+    )
+    return ask_query, select_query
 
 
 def is_cm_rule_assertable(cm_rule: ConceptualMappingRuleABC) -> bool:
@@ -172,7 +207,7 @@ async def generate_and_save_cm_assertions_queries(
             continue
 
         file_name = f"{sanitize_filename(rq_name + sparql_idx)}.rq"
-        file_content = get_sparql_content_for_cm_assertion(
+        file_content, select_query = get_sparql_content_for_cm_assertion(
             cm_rule=cm_rule,
             structural_element=structural_element,
             sparql_title=sparql_title,
@@ -205,6 +240,7 @@ async def generate_and_save_cm_assertions_queries(
                 filename=file_name,
                 path=[sparql_test_suite.title, file_name],
                 content=file_content,
+                query=select_query,
                 type=sparql_test_suite.type,
                 cm_rule=cm_rule_sdk_element
             )
@@ -283,7 +319,7 @@ async def generate_cm_assertions_queries_for_package_state(mapping_package_state
         sparql_idx = generate_sparql_file_idx(cm_rule, structural_element, rule_element_idx)
         sparql_title = f"{sdk_id}"
         file_name = f"{sanitize_filename(rq_name + sparql_idx)}.rq"
-        file_content = get_sparql_content_for_cm_assertion(
+        file_content, select_query = get_sparql_content_for_cm_assertion(
             cm_rule=cm_rule,
             structural_element=structural_element,
             sparql_title=sparql_title,
@@ -305,6 +341,7 @@ async def generate_cm_assertions_queries_for_package_state(mapping_package_state
             title=sparql_title,
             filename=file_name,
             content=file_content,
+            query=select_query,
             type=cm_assertions_suite.type,
             cm_rule=cm_rule_sdk_element
         )

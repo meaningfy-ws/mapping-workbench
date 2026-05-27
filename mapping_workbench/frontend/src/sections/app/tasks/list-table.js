@@ -253,6 +253,7 @@ export const ListTable = (props) => {
                                                                 <Typography sx={{pl: 3}}>
                                                                     {nl2br(item.exception_message)}
                                                                 </Typography>
+                                                                <Divider/>
                                                             </>}
                                                             {!!item.warnings?.length &&
                                                                 <>
