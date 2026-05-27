@@ -1,6 +1,7 @@
-from io import BytesIO
 import gzip
-from typing import Optional
+import zlib
+from io import BytesIO
+from typing import Optional, AsyncIterator
 
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorGridFSBucket, AsyncIOMotorDatabase
@@ -78,3 +79,58 @@ class AsyncGridFSStorage:
         mongo_db = cls.get_mongo_database()
         grid_fs = AsyncIOMotorGridFSBucket(mongo_db, chunk_size_bytes=cls.chunk_size_bytes)
         await grid_fs.delete(file_id)
+
+    @classmethod
+    async def open_download_stream(cls, file_id: ObjectId):
+        mongo_db = cls.get_mongo_database()
+        grid_fs = AsyncIOMotorGridFSBucket(mongo_db, chunk_size_bytes=cls.chunk_size_bytes)
+        return await grid_fs.open_download_stream(file_id)
+
+    @classmethod
+    async def iter_file_chunks(cls, file_id: ObjectId) -> AsyncIterator[bytes]:
+        grid_out = await cls.open_download_stream(file_id)
+        while True:
+            chunk = await grid_out.readchunk()
+            if not chunk:
+                break
+            yield chunk
+
+    @classmethod
+    async def iter_gzip_decompressed_chunks(cls, file_id: ObjectId) -> AsyncIterator[bytes]:
+        """
+        Stream gzip-decompressed bytes incrementally.
+        """
+        decompressor = zlib.decompressobj(zlib.MAX_WBITS | 16)
+
+        async for chunk in cls.iter_file_chunks(file_id):
+            data = decompressor.decompress(chunk)
+            if data:
+                yield data
+
+        tail = decompressor.flush()
+        if tail:
+            yield tail
+
+    @classmethod
+    async def download_file_bytes(cls, file_id: ObjectId) -> Optional[bytes]:
+        """
+        Materialize the whole decompressed file only when truly needed.
+        """
+        try:
+            parts = []
+            async for chunk in cls.iter_gzip_decompressed_chunks(file_id):
+                parts.append(chunk)
+            return b"".join(parts)
+        except Exception as e:
+            print("GridFS :: DOWNLOAD ERROR ::", e)
+            return None
+
+    @classmethod
+    async def download_file_text(cls, file_id: ObjectId, encoding: str = "utf-8") -> Optional[str]:
+        """
+        Convenience helper for callers that still need full text.
+        """
+        data = await cls.download_file_bytes(file_id)
+        if data is None:
+            return None
+        return data.decode(encoding)
