@@ -30,7 +30,8 @@ async def load_object_state(state_id: ObjectId, object_class: Type[ObjectStateTy
     state_content_dump = await AsyncGridFSStorage.download_file_text(state_id)
     if state_content_dump is None:
         return None
-    return object_class.model_validate_json(state_content_dump)
+    return object_class(**orjson.loads(state_content_dump))
+    # return object_class.model_validate_json(state_content_dump)
 
 
 async def delete_object_state(state_id: ObjectId):

@@ -102,7 +102,6 @@ async def get_state_test_data_validatiton(mapping_package_state, test_data_suite
         test_data for test_data in test_data_suite.test_data_states
         if test_data.oid == test_data_id), False
     )
-
     if not test_data:
         raise ResourceNotFoundException(404)
 
