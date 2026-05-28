@@ -27,7 +27,7 @@ async def load_object_state(state_id: ObjectId, object_class: Type[ObjectStateTy
     :param object_class: The class of the object to load.
     :return: The loaded object.
     """
-    state_content_dump = await AsyncGridFSStorage.download_file_text(state_id)
+    state_content_dump = await AsyncGridFSStorage.download_file(state_id)
     if state_content_dump is None:
         return None
     return object_class(**orjson.loads(state_content_dump))
