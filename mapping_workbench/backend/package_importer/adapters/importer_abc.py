@@ -23,7 +23,7 @@ from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFi
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResourceFormat, SPARQLTestSuite, \
     SPARQLTestFileResource, SPARQLQueryValidationType, SPARQLCMRule
 from mapping_workbench.backend.sparql_test_suite.services.data import SPARQL_CM_ASSERTIONS_SUITE_TITLE, \
-    SPARQL_INTEGRATION_TESTS_SUITE_TITLE
+    SPARQL_INTEGRATION_TESTS_SUITE_TITLE, convert_ask_to_select
 from mapping_workbench.backend.task_manager.adapters.task_progress import TaskProgress
 from mapping_workbench.backend.tasks.models.task_response import TaskResponse, TaskResultWarning
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
@@ -224,6 +224,9 @@ class PackageImporterABC(ABC):
                     sdk_element_xpath=metadata['xpath'] if 'xpath' in metadata else None
                 )
 
+                # Convert ASK to SELECT for validation (SELECT returns actual triples)
+                validation_query = convert_ask_to_select(resource_content)
+
                 if not sparql_test_file_resource:
                     sparql_test_file_resource = SPARQLTestFileResource(
                         project=self.project,
@@ -233,12 +236,14 @@ class PackageImporterABC(ABC):
                         filename=resource_name,
                         path=resource_path,
                         content=resource_content,
+                        query=validation_query,
                         type=sparql_test_suite.type,
                         cm_rule=cm_rule_sdk_element
                     )
                     await sparql_test_file_resource.on_create(self.user).save()
                 else:
                     sparql_test_file_resource.content = resource_content
+                    sparql_test_file_resource.query = validation_query
                     sparql_test_file_resource.cm_rule = cm_rule_sdk_element
                     await sparql_test_file_resource.on_update(self.user).save()
 

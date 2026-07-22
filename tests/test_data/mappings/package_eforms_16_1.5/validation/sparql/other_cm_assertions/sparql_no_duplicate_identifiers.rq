@@ -1,0 +1,16 @@
+#title: Test that there are no entities with more than one adms:identifier
+#description: Ensures no entity has duplicate adms:identifier values.
+#xpath: N/A
+
+PREFIX adms: <http://www.w3.org/ns/adms#>
+
+ASK {
+    FILTER NOT EXISTS {
+        SELECT ?s (COUNT(?what) as ?idCount)
+        { 
+            ?s adms:identifier ?what .
+        }
+        GROUP BY ?s
+        HAVING (?idCount > 1)
+    }
+}

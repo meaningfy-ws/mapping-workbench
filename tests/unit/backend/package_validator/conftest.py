@@ -178,6 +178,30 @@ def dummy_sparql_test_suite(sparql_test_resources_file_path: pathlib.Path,
 
 
 @pytest.fixture
+def dummy_sparql_test_suite_with_no_query(sparql_test_resources_file_path: pathlib.Path,
+                                          dummy_package_importer: PackageImporter) -> SPARQLTestState:
+    """
+    Fixture that simulates a SPARQL test file where `query` is None.
+    This tests the error handling when no query is available for validation.
+    """
+    metadata = dummy_package_importer.extract_metadata_from_sparql_query(
+        sparql_test_resources_file_path.read_text(encoding="utf-8")
+    )
+    cm_rule_sdk_element = SPARQLCMRule(
+        eforms_sdk_element_id=None,
+        eforms_sdk_element_title=metadata['title']
+    )
+    content = sparql_test_resources_file_path.read_text(encoding="utf-8")
+    return SPARQLTestState(
+        content=content,
+        query=None,  # No query - should cause error in validator
+        filename=sparql_test_resources_file_path.name,
+        format=SPARQLTestFileResourceFormat.RQ,
+        cm_rule=cm_rule_sdk_element
+    )
+
+
+@pytest.fixture
 def dummy_shacl_test_suite(shacl_test_resources_file_path: pathlib.Path) -> SHACLTestSuiteState:
     return SHACLTestSuiteState(
         shacl_test_states=[SHACLTestState(

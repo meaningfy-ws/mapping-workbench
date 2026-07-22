@@ -19,7 +19,8 @@ from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource, SPARQLTestSuite, \
     SPARQLQueryValidationType, SPARQLCMRule, SPARQLTestSuiteState, SPARQLTestState
 from mapping_workbench.backend.sparql_test_suite.services.api import get_sparql_test_suite_by_project_and_title
-from mapping_workbench.backend.sparql_test_suite.services.data import SPARQL_CM_ASSERTIONS_SUITE_TITLE
+from mapping_workbench.backend.sparql_test_suite.services.data import SPARQL_CM_ASSERTIONS_SUITE_TITLE, \
+    convert_ask_to_select
 from mapping_workbench.backend.user.models.user import User
 
 DEFAULT_RQ_NAME = 'cm_assertion_'
@@ -61,7 +62,7 @@ def render_sparql_template(
         prefixes: list[str],
         subject_type_display: str,
         cm_rule,
-        query_keyword: str,  # "SELECT *" or "ASK"
+        query_keyword: str = "ASK",
 ) -> str:
     description_part = (
         f"“{sparql_description}” " if sparql_description else ""
@@ -114,16 +115,6 @@ def get_sparql_content_for_cm_assertion(
 
     subject_type_display = ('\n\t' + subject_type) if subject_type else ''
 
-    select_query = render_sparql_template(
-        sparql_title,
-        sparql_description,
-        sparql_xpath,
-        prefixes,
-        subject_type_display,
-        cm_rule,
-        query_keyword="SELECT *",
-    )
-
     ask_query = render_sparql_template(
         sparql_title,
         sparql_description,
@@ -131,8 +122,10 @@ def get_sparql_content_for_cm_assertion(
         prefixes,
         subject_type_display,
         cm_rule,
-        query_keyword="ASK",
     )
+
+    select_query = convert_ask_to_select(ask_query)
+
     return ask_query, select_query
 
 
