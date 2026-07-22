@@ -46,6 +46,7 @@ class SPARQLTestState(ObjectState):
     title: Optional[str] = None
     filename: Optional[str] = None
     content: Optional[str] = None
+    query: Optional[str] = None
     cm_rule: Optional[SPARQLCMRule] = None
 
     model_config = ConfigDict(use_enum_values=True)
@@ -120,6 +121,7 @@ class SPARQLTestFileResource(FileResource, StatefulObjectABC):
     type: Optional[SPARQLQueryValidationType] = None
     sparql_test_suite: Optional[Link[SPARQLTestSuite]] = None
     cm_rule: Optional[SPARQLCMRule] = None
+    query: Optional[str] = None
 
     async def get_state(self) -> SPARQLTestState:
         return SPARQLTestState(
@@ -129,6 +131,7 @@ class SPARQLTestFileResource(FileResource, StatefulObjectABC):
             title=self.title,
             filename=self.filename,
             content=self.content,
+            query=self.query,
             cm_rule=self.cm_rule
         )
 

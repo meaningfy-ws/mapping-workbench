@@ -11,3 +11,5 @@ class APIValidateSDKVersionsToImportResponse(BaseModel):
     in_remote_repo: List[str] = Field(default_factory=list)
     not_in_remote_repo: List[str] = Field(default_factory=list)
     invalid_repo_url: bool = False
+    duplicates_found: bool = False
+    invalid_formats: List[str] = Field(default_factory=list)

@@ -57,10 +57,16 @@ const Page = () => {
     //     });
     // };
 
-    const validateImportFieldRegistry = async (values, formik) => {
+    const validateImportFieldRegistry = async (values) => {
         const validatedVersions = await fieldsRegistryApi.validateImportEFormsXSD(values);
         let formErrors = []
         if (validatedVersions) {
+            if (!!validatedVersions?.duplicates_found?.length) {
+                formErrors.push("[" + validatedVersions.duplicates_found.join(', ') + "]: Duplicate(s)");
+            }
+            if (!!validatedVersions?.invalid_formats?.length) {
+                formErrors.push("[" + validatedVersions.invalid_formats.join(', ') + "]: Invalid version(s)");
+            }
             if (!!validatedVersions?.not_in_remote_repo?.length) {
                 formErrors.push("[" + validatedVersions.not_in_remote_repo.join(', ') + "] version(s) not found in the remote repository.");
             }
@@ -70,7 +76,6 @@ const Page = () => {
             setErrors(formErrors);
         }
         return formErrors.length === 0;
-        //return handleConfirmImportFields(validatedVersions, values);
     };
 
     const formik = useFormik({
@@ -91,7 +96,7 @@ const Page = () => {
             values['project_id'] = sessionApi.getSessionProject();
 
             const toastId = toastLoad(`Importing eForm Fields ... `)
-            if (await validateImportFieldRegistry(values, formik)) {
+            if (await validateImportFieldRegistry(values)) {
                 sectionApi.importEFormsXSD(values)
                     .then((res) => {
                         helpers.setStatus({success: true});
@@ -103,10 +108,12 @@ const Page = () => {
                         helpers.setErrors({submit: err.message});
                         toastError(`eForm Fields import failed: ${err.message}.`, toastId);
                     })
-                    .finally(setIsRunning(false))
+                    .finally(() => {
+                        setIsRunning(false)
+                    })
             } else {
                 setIsRunning(false);
-                toastSuccess(`Importing eForm Fields canceled.`, toastId)
+                toastError(`Importing eForm Fields canceled.`, toastId)
             }
         }
     });

@@ -3,6 +3,7 @@ from typing import Any, List
 import rdflib
 from pydantic import validate_call
 
+from mapping_workbench.backend.core.services.io import unique_hash
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
 from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLTestDataValidationResult, \
@@ -41,6 +42,11 @@ class SPARQLValidator(TestDataValidator):
         for sparql_query in sparql_queries:
             mwb_logger.log_all_info(f"Running assertion for {sparql_query.cm_rule.sdk_element_title}")
             sparql_query_result: SPARQLQueryResult = SPARQLQueryResult(
+                validation_element_id=unique_hash(
+                    sparql_query.cm_rule.sdk_element_id if sparql_query.cm_rule else "",
+                    sparql_query.cm_rule.xpath_condition if sparql_query.cm_rule else "",
+                    sparql_query.content
+                ),
                 query=sparql_query,
                 result=None,
                 missing_fields=[],
@@ -52,12 +58,20 @@ class SPARQLValidator(TestDataValidator):
                 )
             )
             try:
-                sparql_query_result.query_result = bool(self.rdf_graph.query(sparql_query.content))
+                query_result = self.rdf_graph.query(sparql_query.query)
+
+                if getattr(query_result, 'type', None) == 'SELECT':
+                    sparql_query_result.query_results = [
+                        row.asdict() for row in query_result
+                    ]
+                    sparql_query_result.query_result = bool(sparql_query_result.query_results)
+                else:
+                    sparql_query_result.query_result = bool(query_result)
                 self.process_sparql_result(sparql_query_result)
             except Exception as e:
                 sparql_query_result.error = str(e)[:100]
                 sparql_query_result.result = SPARQLQueryRefinedResultType.ERROR.value
-                mwb_logger.log_all_error(message=f"ERROR :: SPARQL Validation :: Q:\n{sparql_query.content}\nStack trace:", stack_trace=str(e))
+                mwb_logger.log_all_error(message=f"ERROR :: SPARQL Validation :: Q:\n{sparql_query.query}\nStack trace:", stack_trace=str(e))
 
             results.append(sparql_query_result)
 
@@ -75,19 +89,36 @@ class SPARQLValidator(TestDataValidator):
             xpath_validation = self.test_data.validation.xpath
         if xpath_validation and xpath_validation.results:
             xpath_validation_results = xpath_validation.results
+            sparql_query_element_id = sparql_query_result.query.cm_rule.sdk_element_id.strip() \
+                if sparql_query_result.query.cm_rule and sparql_query_result.query.cm_rule.sdk_element_id else None
             sparql_query_xpath = sparql_query_result.query.cm_rule.sdk_element_xpath.strip() \
-                if sparql_query_result.query.cm_rule else None
+                if sparql_query_result.query.cm_rule and sparql_query_result.query.cm_rule.sdk_element_xpath else None
             sparql_xpath_condition = sparql_query_result.query.cm_rule.xpath_condition.xpath_condition.strip() \
                 if (sparql_query_result.query.cm_rule and
                     sparql_query_result.query.cm_rule.xpath_condition and
                     sparql_query_result.query.cm_rule.xpath_condition.xpath_condition) \
                 else None
             validation_xpaths = set()
+            found_xpaths = []
             validation_xpath_conditions = set()
             for xpath_assertion in xpath_validation_results:
                 if xpath_assertion.is_covered:
-                    validation_xpaths.add(xpath_assertion.sdk_element_xpath.strip())
-                if xpath_assertion.xpath_conditions:
+                    validation_xpaths.add((xpath_assertion.sdk_element_xpath or '').strip())
+                    if xpath_assertion.sdk_element_xpath == sparql_query_xpath:
+                        test_data_found_xpaths = [
+                            xpath_entry
+                            for test_data_xpath in xpath_assertion.test_data_xpaths
+                            if test_data_xpath.test_data_oid == sparql_query_result.test_data.test_data_oid
+                            for xpath_entry in test_data_xpath.xpaths
+                        ]
+                        if test_data_found_xpaths:
+                            found_xpaths.extend(test_data_found_xpaths)
+
+                if (
+                        xpath_assertion.sdk_element_xpath == sparql_query_xpath
+                        and xpath_assertion.sdk_element_id == sparql_query_element_id
+                        and xpath_assertion.xpath_conditions
+                ):
                     validation_xpath_conditions |= set([
                         (xpath_condition.xpath_condition or '').strip()
                         for xpath_condition in xpath_assertion.xpath_conditions
@@ -99,11 +130,14 @@ class SPARQLValidator(TestDataValidator):
             sparql_query_result.meets_xpath_condition = (not sparql_xpath_condition or (
                     sparql_xpath_condition in validation_xpath_conditions
             ))
+            if found_xpaths:
+                sparql_query_result.test_data.xpaths = found_xpaths
 
             # Refined result
             result = self.refined_result(ask_answer, sparql_query_result)
 
         sparql_query_result.result = result
+
 
     @classmethod
     def refined_result(cls, ask_answer, sparql_query_result: SPARQLQueryResult) \

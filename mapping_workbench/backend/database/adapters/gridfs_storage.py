@@ -11,6 +11,7 @@ class AsyncGridFSStorage:
     This class is a wrapper for the AsyncIOMotorGridFSBucket class.
     """
     _mongo_database: AsyncIOMotorDatabase = None
+    chunk_size_bytes = 4096 * 1024
 
     @classmethod
     def set_mongo_database(cls, mongo_database: AsyncIOMotorDatabase):
@@ -27,6 +28,7 @@ class AsyncGridFSStorage:
         Gets the mongo database to use for the gridfs storage.
         :return: The mongo database to use for the gridfs storage.
         """
+
         if cls._mongo_database is None:
             from mapping_workbench.backend.database.adapters.mongodb import DB
             cls._mongo_database = DB.get_database()
@@ -41,7 +43,7 @@ class AsyncGridFSStorage:
         :return: The id of the uploaded file.
         """
         mongo_db = cls.get_mongo_database()
-        grid_fs = AsyncIOMotorGridFSBucket(mongo_db)
+        grid_fs = AsyncIOMotorGridFSBucket(mongo_db, chunk_size_bytes=cls.chunk_size_bytes)
         compressed_data = gzip.compress(file_content.encode("utf-8"))
         file_id = await grid_fs.upload_from_stream(file_name, compressed_data)
         return file_id
@@ -54,17 +56,17 @@ class AsyncGridFSStorage:
         :return: The content of the downloaded file.
         """
         mongo_db = cls.get_mongo_database()
-        grid_fs = AsyncIOMotorGridFSBucket(mongo_db)
-        tmp_stream = BytesIO()
+        grid_fs = AsyncIOMotorGridFSBucket(mongo_db, chunk_size_bytes=cls.chunk_size_bytes)
         try:
-            await grid_fs.download_to_stream(file_id, tmp_stream)
-            compressed_data = tmp_stream.getvalue()
-            result_data = gzip.decompress(compressed_data).decode("utf-8")
+            with BytesIO() as compressed_stream:
+                await grid_fs.download_to_stream(file_id, compressed_stream)
+                compressed_stream.seek(0)
+                with gzip.GzipFile(fileobj=compressed_stream, mode="rb") as gz:
+                    result_data = gz.read().decode("utf-8")
+            return result_data
         except Exception as e:
-            print("GridFS :: ERROR :: ", e)
-            result_data = None
-        tmp_stream.close()
-        return result_data
+            print("GridFS :: ERROR ::", e)
+            return None
 
     @classmethod
     async def delete_file(cls, file_id: ObjectId):
@@ -74,5 +76,5 @@ class AsyncGridFSStorage:
         :return: None
         """
         mongo_db = cls.get_mongo_database()
-        grid_fs = AsyncIOMotorGridFSBucket(mongo_db)
+        grid_fs = AsyncIOMotorGridFSBucket(mongo_db, chunk_size_bytes=cls.chunk_size_bytes)
         await grid_fs.delete(file_id)

@@ -1,3 +1,4 @@
+from collections import Counter
 from typing import List
 
 from beanie import PydanticObjectId
@@ -22,7 +23,8 @@ from mapping_workbench.backend.fields_registry.services.data import tree_of_stru
 from mapping_workbench.backend.fields_registry.services.generate_conceptual_mapping_rules import \
     generate_conceptual_mapping_rules
 from mapping_workbench.backend.fields_registry.services.import_fields_registry import \
-    eforms_sdk_versions_from_str_to_list, exists_eforms_versions_in_remote_repo, exists_import_eforms_versions_in_pool
+    eforms_sdk_versions_from_str_to_list, exists_eforms_versions_in_remote_repo, exists_import_eforms_versions_in_pool, \
+    find_invalid_eforms_sdk_version_formats
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
@@ -202,7 +204,13 @@ async def route_check_import_eforms_xsd(
         branch_or_tag_name: str = Form(...)
 ):
     versions = eforms_sdk_versions_from_str_to_list(branch_or_tag_name)
+
     validated_versions = APIValidateSDKVersionsToImportResponse()
+
+    counter = Counter(versions)
+    validated_versions.duplicates_found = [item for item, count in counter.items() if count > 1]
+    validated_versions.invalid_formats = find_invalid_eforms_sdk_version_formats(versions)
+
     # validated_versions.in_project=(await exists_eforms_versions_in_project(project_id, versions)),
     validated_versions.in_pool = (await exists_import_eforms_versions_in_pool(versions))
 
@@ -262,9 +270,10 @@ async def route_generate_conceptual_mapping_rules(
     name=f"fields:elements_tree"
 )
 async def route_tree_structural_elements(
-        project: PydanticObjectId = None
+        project: PydanticObjectId = None,
+        wcm: bool = False # with conceptual mappings
 ):
-    elements = await get_project_structural_elements(project)
+    elements = await get_project_structural_elements(project, with_conceptual_mappings=wcm)
     return tree_of_structural_elements(elements)
 
 

@@ -25,9 +25,11 @@ import useItemsSearch from 'src/hooks/use-items-search';
 import {ListTable} from "src/sections/app/mapping-package/list-table";
 import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
+import {mappingPackageStatesApi} from 'src/api/mapping-packages/states';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {PackageImporter} from 'src/sections/app/mapping-package/package-importer';
 import AutorenewIcon from "@mui/icons-material/Autorenew";
+import ClearCacheIcon from "@mui/icons-material/LayersClear";
 
 
 const useItemsStore = () => {
@@ -105,11 +107,22 @@ const Page = () => {
                             Refresh
                         </Button>
                         <Button
+                            id="clear_cache_button"
+                            color="inherit"
+                            startIcon={<ClearCacheIcon/>}
+                            title="Clear Validation Reports cache"
+                            onClick={async () => {
+                                await mappingPackageStatesApi.clearValidationReportsFromCache();
+                            }}
+                        >
+                            Clear Cache
+                        </Button>
+                        <Button
                             onClick={srcExportDialog.handleOpen}
                             id="src_export_button"
                             startIcon={<UploadIcon/>}
                         >
-                            Export SRC
+                            Export Sources
                         </Button>
                         <Button
                             onClick={importDialog.handleOpen}
@@ -197,7 +210,8 @@ const Page = () => {
                 </DialogContent>
             </Dialog>
         </>
-    );
+    )
+        ;
 };
 
 Page.getLayout = (page) => (

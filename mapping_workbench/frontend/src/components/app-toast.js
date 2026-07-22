@@ -9,6 +9,7 @@ import Collapse from "@mui/material/Collapse";
 import Button from "@mui/material/Button";
 import CancelIcon from '@mui/icons-material/Cancel';
 import WarningIcon from '@mui/icons-material/Warning';
+import ErrorIcon from '@mui/icons-material/Error';
 
 const defaultDuration = 60000
 
@@ -32,8 +33,13 @@ const toastClose = (content, id) => (
 
 const ToastErrorModel = ({err, id}) => {
     const [show, setShow] = useState(false)
-    let detailStr = err.response?.data?.detail
-    detailStr = !Array.isArray(detailStr) ? detailStr : detailStr?.[0]?.msg
+    let detailStr = null;
+    if (typeof err === 'object' && err !== null) {
+        detailStr = err.response?.data?.detail;
+        detailStr = !Array.isArray(detailStr) ? detailStr : detailStr?.[0]?.msg
+    } else if (typeof err === 'string') {
+        detailStr = err;
+    }
     return (
         <Stack sx={{
             position: 'relative'
@@ -43,7 +49,7 @@ const ToastErrorModel = ({err, id}) => {
                 alignItems="center"
                 justifyContent="center">
                 <CancelIcon sx={{color: '#ff4b4b', mr:2}}/>
-                {err.message}
+                {err && err.message}
                 {id && <IconButton sx={{pr: 0}}
                                    onClick={() => toast.dismiss(id)}>
                     <CloseIcon/>
@@ -72,8 +78,8 @@ export const toastError = (err, id) => (
                            id={id} />,{id, duration: defaultDuration})
 )
 
-export const toastSuccess = (content, id) => (
-    toast.success(toastClose(content, id), {id, duration: defaultDuration})
+export const toastSuccess = (content, id, duration = defaultDuration) => (
+    toast.success(toastClose(content, id), {id, duration: duration})
 )
 
 export const toastWarning = (content, id) => (

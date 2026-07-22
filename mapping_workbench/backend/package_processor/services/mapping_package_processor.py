@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import List
 
 from beanie import PydanticObjectId
@@ -7,6 +6,7 @@ from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState, MappingPackage, \
     MappingPackageStateGate
 from mapping_workbench.backend.mapping_package.services.api import get_mapping_package
+from mapping_workbench.backend.package_processor.services import TaskToRun
 from mapping_workbench.backend.package_transformer.services.mapping_package_transformer import \
     transform_mapping_package_state
 from mapping_workbench.backend.package_validator.services.mapping_package_validator import validate_mapping_package
@@ -15,17 +15,9 @@ from mapping_workbench.backend.package_validator.services.sparql_cm_assertions i
 from mapping_workbench.backend.state_manager.services.object_state_manager import save_object_state
 from mapping_workbench.backend.task_manager.adapters.task_progress import TaskProgress
 from mapping_workbench.backend.tasks.models.task_response import TaskResponse
+from mapping_workbench.backend.tracking.models.tracking import ActivityType, ActivityMedata, EntityType
+from mapping_workbench.backend.tracking.services.tracking import track_activity
 from mapping_workbench.backend.user.models.user import User
-
-
-class TaskToRun(Enum):
-    TRANSFORM_TEST_DATA = "transform_test_data"
-    GENERATE_CM_ASSERTIONS = "generate_cm_assertions"
-    VALIDATE_PACKAGE = "validate_package"
-    VALIDATE_PACKAGE_XPATH = "validate_package_xpath"
-    VALIDATE_PACKAGE_SPARQL = "validate_package_sparql"
-    VALIDATE_PACKAGE_SHACL = "validate_package_shacl"
-
 
 COMPOUND_TASKS = [TaskToRun.VALIDATE_PACKAGE]
 COMPOUND_TASKS_COUNT = len(COMPOUND_TASKS)
@@ -38,6 +30,7 @@ async def create_mapping_package_state(mapping_package: MappingPackage):
 async def process_mapping_package(
         package_id: PydanticObjectId,
         use_only_package_state: bool = False,
+        include_package_assertions: bool = True,
         tasks_to_run: List[str] = None,
         user: User = None,
         task_response: TaskResponse = None
@@ -51,6 +44,13 @@ async def process_mapping_package(
     :param user:
     :return:
     """
+    mapping_package: MappingPackage = await get_mapping_package(package_id)
+
+    await track_activity(ActivityType.PROCESS, user, ActivityMedata(
+        entity_type=EntityType.PACKAGE,
+        entity_id=str(mapping_package.id),
+        entity_name=mapping_package.title or mapping_package.identifier
+    ))
 
     if not task_response:
         task_response = TaskResponse()
@@ -69,8 +69,6 @@ async def process_mapping_package(
         name="Process Package",
         steps_count=steps_count
     )
-
-    mapping_package: MappingPackage = await get_mapping_package(package_id)
 
     mwb_logger.log_all_info(f"Processing Mapping Package '{mapping_package.identifier}' ... ")
 
@@ -97,13 +95,21 @@ async def process_mapping_package(
 
         if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE.value in tasks_to_run:
             mwb_logger.log_all_info("Validating Package State ...")
-            await validate_mapping_package(mapping_package_state, tasks_to_run, task_progress=task_progress)
+            await validate_mapping_package(
+                mapping_package_state, tasks_to_run,
+                include_package_assertions=include_package_assertions,
+                task_progress=task_progress
+            )
             mwb_logger.log_all_info("Validating Package State ... DONE")
 
     mwb_logger.log_all_info("Saving Package State ...")
     task_progress.start_action_step(name="save_package_state")
     state_id = await save_object_state(mapping_package_state.on_create(user=user))
-    mapping_package_state_gate: MappingPackageStateGate = MappingPackageStateGate(**mapping_package_state.model_dump())
+    mwb_logger.log_all_info("Saving Package State ... DONE")
+    mapping_package_state_gate: MappingPackageStateGate = MappingPackageStateGate(
+        project=mapping_package.project,
+        **mapping_package_state.model_dump()
+    )
     mapping_package_state_gate.id = state_id
     await mapping_package_state_gate.on_create(user=user).save()
     task_progress.finish_current_action_step()

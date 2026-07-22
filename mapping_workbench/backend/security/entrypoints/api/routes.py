@@ -2,10 +2,12 @@ from fastapi import APIRouter, Depends
 from httpx_oauth.clients.google import GoogleOAuth2
 
 from mapping_workbench.backend.config import settings
-from mapping_workbench.backend.security.services.user_manager import auth_backend, fastapi_users, current_active_user
+from mapping_workbench.backend.security.services.user_manager import auth_backend, fastapi_users, current_active_user, \
+    current_active_admin_user, generate_jwt_token, decode_jwt_token
 from mapping_workbench.backend.user.models.user import UserRead, UserCreate, User
 
 ROUTE_PREFIX = "/auth"
+ROUTE_SECURITY_PREFIX = "/security"
 TAGS = ["auth"]
 google_oauth_client = GoogleOAuth2(settings.GOOGLE_ID, settings.GOOGLE_SECRET)
 
@@ -49,3 +51,30 @@ router.include_router(
 @router.get("/authenticated-route")
 async def authenticated_route(user: User = Depends(current_active_user)):
     return {"message": f"Hello {user.email}!"}
+
+
+sub_router = APIRouter()
+
+@sub_router.get(
+    "/token/decode/{token}",
+    name="security:token:decode",
+    dependencies=[Depends(current_active_admin_user)]
+)
+async def route_token_generate(
+        token: str
+):
+    return decode_jwt_token(token)
+
+
+@sub_router.get(
+    "/token/generate/{username}",
+    name="security:token:generate",
+    dependencies=[Depends(current_active_admin_user)]
+)
+async def route_token_generate(
+        username: str
+):
+    return {"access_token": await generate_jwt_token(username)}
+
+
+router.include_router(sub_router, prefix=ROUTE_SECURITY_PREFIX, tags=["security"])

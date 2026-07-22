@@ -15,7 +15,8 @@ DEFAULT_PACKAGE_IDENTIFIER = "default"
 async def get_latest_mapping_package_state_gate(mapping_package: MappingPackage) -> MappingPackageStateGate | None:
     mapping_package_state_gates: List[MappingPackageStateGate] = \
         await MappingPackageStateGate.find(
-            MappingPackageStateGate.identifier == mapping_package.identifier
+            MappingPackageStateGate.identifier == mapping_package.identifier,
+            MappingPackageStateGate.mapping_package_oid == mapping_package.id
         ).sort(
             -MappingPackageStateGate.created_at
         ).limit(1).to_list()

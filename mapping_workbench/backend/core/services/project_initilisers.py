@@ -13,15 +13,18 @@ from mapping_workbench.backend.mapping_rule_registry.models.entity import Mappin
 from mapping_workbench.backend.ontology.models.namespace import Namespace, NamespaceCustom
 from mapping_workbench.backend.ontology.models.term import Term
 from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
+from mapping_workbench.backend.package_validator.models.validation_comments import ValidationComment
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile
+from mapping_workbench.backend.security import API_ADMIN_USER_USERNAME
 from mapping_workbench.backend.security.models.security import AccessToken
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataManifestationHistory
+from mapping_workbench.backend.tracking.models.tracking import TrackedUser, TrackedActivity
 from mapping_workbench.backend.triple_map_fragment.models.entity import SpecificTripleMapFragment, \
-    GenericTripleMapFragment
+    GenericTripleMapFragment, GenericTripleMapFragmentTransformHistory
 from mapping_workbench.backend.triple_map_registry.models.entity import TripleMapRegistry
 from mapping_workbench.backend.user.models.user import User, Role
 from mapping_workbench.backend.xsd_schema.models.xsd_file_resource import XSDFileResource
@@ -40,6 +43,22 @@ async def init_admin_user() -> None:
 
     if await User.find_one(User.email == admin_user.email).count() == 0:
         await admin_user.create()
+    return
+
+
+async def init_api_admin_user() -> None:
+    api_admin_user: User = User(
+        email=API_ADMIN_USER_USERNAME,
+        hashed_password="",
+        name=API_ADMIN_USER_USERNAME,
+        is_active=True,
+        is_superuser=True,
+        is_verified=True,
+        roles=[Role.API, Role.ADMIN]
+    )
+
+    if await User.find_one(User.email == api_admin_user.email).count() == 0:
+        await api_admin_user.create()
     return
 
 
@@ -62,12 +81,14 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             TestDataManifestationHistory,
             MappingPackage,
             MappingPackageStateGate,
+            ValidationComment,
             MappingRuleRegistry,
             MappingGroup,
             ConceptualMappingRule,
             TripleMapRegistry,
             SpecificTripleMapFragment,
             GenericTripleMapFragment,
+            GenericTripleMapFragmentTransformHistory,
             Namespace,
             NamespaceCustom,
             Term,
@@ -76,6 +97,8 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             XSDFileResource,
             ConceptualMappingGroupBeanie,
             PoolSDKField,
-            PoolSDKFieldsVersionedView
+            PoolSDKFieldsVersionedView,
+            TrackedUser,
+            TrackedActivity
         ],
     )

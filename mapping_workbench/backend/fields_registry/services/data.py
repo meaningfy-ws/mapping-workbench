@@ -1,3 +1,4 @@
+import re
 from typing import List
 
 from beanie import PydanticObjectId
@@ -7,16 +8,29 @@ from mapping_workbench.backend.project.models.entity import Project
 
 
 async def get_structural_element_by_unique_fields(
-        sdk_element_id, absolute_xpath, project_id: PydanticObjectId, bt_id: str = None, name: str = None
+        sdk_element_id, absolute_xpath, project_id: PydanticObjectId, bt_id: str = None, name: str = None,
+        sdk_version: str = None
 ) -> StructuralElement:
     project_link = Project.link_from_id(project_id)
-    return await StructuralElement.find_one(
-        StructuralElement.project == project_link,
-        StructuralElement.sdk_element_id == sdk_element_id,
-        # StructuralElement.name == name,
-        # StructuralElement.bt_id == bt_id,
-        StructuralElement.absolute_xpath == absolute_xpath
-    )
+
+    regex_sdk_version = ""
+    if sdk_version:
+        regex_sdk_version = sdk_version
+        is_sdk_version_minor = len(sdk_version.split(".")) == 2
+        if is_sdk_version_minor:
+            regex_sdk_version = sdk_version + "."
+
+    sdk_version_regex_pattern = f"^{re.escape(regex_sdk_version)}"
+    return await StructuralElement.find_one({
+        StructuralElement.project: project_link,
+        StructuralElement.sdk_element_id: sdk_element_id,
+        StructuralElement.absolute_xpath: absolute_xpath,
+        StructuralElement.versions: {
+            "$elemMatch": {
+                "$regex": sdk_version_regex_pattern
+            }
+        }
+    })
 
 
 def prepare_tree_structural_element(item: dict):

@@ -12,7 +12,7 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import ClearIcon from '@mui/icons-material/Clear';
 
-export const TableFilterHeader = ({fieldName, title, sort, desc, onSort, filters, onFilter, tooltipTitle = 'Sort'}) => {
+export const TableFilterHeader = ({fieldName, title, sort, desc, onSort, filters, onFilter, tooltipTitle = 'Sort', defaultSortDirection = 'asc'}) => {
     const [popover, setPopover] = useState(null)
     const [hover, setHover] = useState(false)
 
@@ -22,7 +22,6 @@ export const TableFilterHeader = ({fieldName, title, sort, desc, onSort, filters
     const handleFilterChange = (value) => onFilter({...filters, [fieldName]: value})
 
     const filter = filters[fieldName] ?? ''
-    const direction = fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
     const hoverOpacity = (hover && sort.column !== fieldName) ? .7 : 1
 
     return (
@@ -44,12 +43,19 @@ export const TableFilterHeader = ({fieldName, title, sort, desc, onSort, filters
                                 sx={{rotate: 90}}
                                 onClick={() => onSort(fieldName, desc)}
                                 size="small">
-                        {(sort.column === fieldName || hover) && <ArrowDownwardIcon
-                            style={{
-                                transform: direction !== 'desc' ? 'rotate(180deg)' : '', transition: 'transform 0.4s',
-                                opacity: hoverOpacity
-                            }}
-                            fontSize='10px'/>}
+                        {(sort.column === fieldName || hover) && (
+                            <ArrowDownwardIcon
+                                style={{
+                                    transform: (sort.column === fieldName
+                                        ? sort.direction !== 'desc'
+                                        : defaultSortDirection !== 'desc')
+                                        ? 'rotate(180deg)' : '',
+                                    transition: 'transform 0.4s',
+                                    opacity: sort.column === fieldName ? 1 : 0.3
+                                }}
+                                fontSize='10px'
+                            />
+                        )}
                     </IconButton>
                 </Stack>
                 <IconButton onClick={handleClick}

@@ -1,3 +1,4 @@
+import {useRouter} from 'next/router';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import FileList from '../mapping-package/state/file-list';
@@ -5,17 +6,21 @@ import {useFileNavigation} from '../mapping-package/state/utils';
 import SparqlFileReport from "./sparql_validation_report_file";
 import SparqlTestDatasetReport from "./sparql_validation_report_test_dataset";
 import SparqlPackageStateReport from "./sparql_validation_report_package_state";
+import {DataLoader} from "../../../components/app/loading/data-loader";
 
 
-const SparqlValidationReportView = ({sid, reportTree, validationReport, handleExport}) => {
+const SparqlValidationReportView = ({reportTree, validationReport, handleExport}) => {
+
+    const router = useRouter()
+    const {sid, packageid, datasetid} = router.query
 
     const {
         selectedPackageState,
         selectedTestDataset,
-        handleSetPackageState,
-        handleSetTestDataset,
         handleSetTestAndPackage
-    } = useFileNavigation(reportTree)
+    } = useFileNavigation(reportTree, 'sparql', packageid, datasetid)
+
+    if (!validationReport) return <DataLoader />
 
     return (
         <Grid container
@@ -27,8 +32,7 @@ const SparqlValidationReportView = ({sid, reportTree, validationReport, handleEx
                           files={reportTree.test_data_suites}
                           selectedPackageState={selectedPackageState}
                           selectedTestDataset={selectedTestDataset}
-                          handleFolderChange={handleSetPackageState}
-                          handleFileChange={handleSetTestDataset}/>
+                          handleFolderAndFileChange={handleSetTestAndPackage}/>
             </Grid>
             {!selectedPackageState &&
                 <SparqlPackageStateReport
@@ -44,7 +48,7 @@ const SparqlValidationReportView = ({sid, reportTree, validationReport, handleEx
                     sid={sid}
                     handleExport={handleExport}
                     handleSelectFile={handleSetTestAndPackage}
-                    suiteId={selectedPackageState.oid}
+                    suiteId={selectedPackageState}
                 />
 
             }
@@ -52,8 +56,8 @@ const SparqlValidationReportView = ({sid, reportTree, validationReport, handleEx
                 <SparqlFileReport
                     sid={sid}
                     handleExport={handleExport}
-                    suiteId={selectedPackageState.oid}
-                    testId={selectedTestDataset.oid}
+                    suiteId={selectedPackageState}
+                    testId={selectedTestDataset}
                 />
             }
         </Grid>

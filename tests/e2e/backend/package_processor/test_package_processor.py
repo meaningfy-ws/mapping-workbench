@@ -35,4 +35,4 @@ async def test_process_mapping_package(
         assert mapping_package_state
         assert mapping_package_state.validation
 
-    await clear_project_data(dummy_project, PackageType.EFORMS)
+        await clear_project_data(dummy_project, PackageType.EFORMS)

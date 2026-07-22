@@ -6,7 +6,7 @@ import {paths} from '../../../paths';
 
 const TABS = [
     {
-        label: 'Triple Map Fragments',
+        label: 'Mapping Rules',
         value: paths.app.triple_map_fragments.index,
         id: 'triple_map_fragments_tab'
     },

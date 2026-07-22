@@ -21,7 +21,7 @@ const ShaclFileReport = ({sid, suiteId, testId}) => {
 
     const handleValidationReportsGet = (sid, suiteId, testId) => {
         setDataState({load: true, error: false})
-        sectionApi.getSparqlReportsFile(sid, suiteId, testId)
+        sectionApi.getShaclReportsFile(sid, suiteId, testId)
             .then(res => {
                 setValidationReport(mapShaclFileResults(res.results?.[0]?.results?.[0]?.results) ?? [])
                 setValidationResult(mapShaclFileStates(res.results?.[0]) ?? []);
@@ -40,7 +40,9 @@ const ShaclFileReport = ({sid, suiteId, testId}) => {
 
     const mapShaclFileResults = (result) => result?.map(e => ({...e.binding}))
 
-    const itemsSearch = useItemsSearch(validationReport, sectionApi);
+    const itemsSearch = useItemsSearch(validationReport, sectionApi, [], {}, null, {
+        "nb_comments": "desc"
+    });
 
     return (
         <>
@@ -71,6 +73,8 @@ const ShaclFileReport = ({sid, suiteId, testId}) => {
                             onFilter={itemsSearch.handleFiltersChange}
                             filters={itemsSearch.state.filters}
                             sectionApi={sectionApi}
+                            updateItems={setValidationReport}
+                            listItems={itemsSearch.filteredItems}
                         />
                     </TableLoadWrapper>
                 </Paper>

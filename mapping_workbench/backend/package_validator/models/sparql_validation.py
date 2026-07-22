@@ -1,10 +1,11 @@
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from pydantic import BaseModel, ConfigDict
 
 from mapping_workbench.backend.package_validator.models.test_data_validation import TestDataValidationResult, \
     ValidationTestDataEntry, CMRuleSDKElement
+from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertionEntry
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestState
 
 
@@ -22,8 +23,9 @@ class SPARQLQueryRefinedResultType(Enum):
 
 class SPARQLQueryTestDataEntry(ValidationTestDataEntry):
     """
-
     """
+    xpaths: Optional[List[XPathAssertionEntry]] = None
+    fields_covered: Optional[bool] = True
 
 
 class ValidationSPARQLQuery(BaseModel):
@@ -34,8 +36,10 @@ class SPARQLQueryResult(ValidationSPARQLQuery, BaseModel):
     """
     Stores SPARQL query execution result
     """
+    validation_element_id: Optional[str] = None
     result: Optional[SPARQLQueryRefinedResultType] = None
     query_result: Optional[bool] = None
+    query_results: Optional[List[Dict]] = None
     fields_covered: Optional[bool] = True
     meets_xpath_condition: Optional[bool] = True
     missing_fields: Optional[List[CMRuleSDKElement]] = []
@@ -61,6 +65,7 @@ class SPARQLValidationSummaryResult(BaseModel):
 
 
 class SPARQLValidationSummary(ValidationSPARQLQuery, BaseModel):
+    validation_element_id: Optional[str] = None
     result: Optional[SPARQLValidationSummaryResult] = SPARQLValidationSummaryResult()
 
 

@@ -6,10 +6,13 @@ import Button from '@mui/material/Button';
 import {useTheme} from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import {LineProgress} from './state-line-progress';
+import CircularProgress from "@mui/material/CircularProgress";
+import {DataLoader} from "../../../../components/app/loading/data-loader";
+import Divider from "@mui/material/Divider";
 
 const ResultSummaryCoverageXpath = ({item, validationReport, handleChangeTab}) => {
-    const theme= useTheme()
-    if (!validationReport) return null
+    const theme = useTheme()
+    if (!validationReport) return <DataLoader />
 
     const {coveredReports, notCoveredReports} = validationReport?.reduce((acc, report) => {
         acc[report.is_covered ? "coveredReports" : "notCoveredReports"].push({sdk_element_xpath: report.sdk_element_xpath})
@@ -47,6 +50,7 @@ const ResultSummaryCoverageXpath = ({item, validationReport, handleChangeTab}) =
                 <LineProgress color='valid'
                               value={coveredReportPercent}/>
             </Stack>
+            <Divider sx={{ my: 2 }} />
             <Stack sx={{mb: 'auto'}}>
                 <Typography variant='secondary'>XPATHs not covered</Typography>
                 <Typography sx={{mb: 2}}>{`${notCoveredReports.length}/${notCoveredReportPercent}%`}</Typography>

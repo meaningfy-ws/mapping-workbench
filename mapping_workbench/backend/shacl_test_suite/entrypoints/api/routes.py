@@ -1,7 +1,7 @@
 from typing import List, Annotated
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, status, Depends, Query, HTTPException
+from fastapi import APIRouter, status, Depends, Query, HTTPException, Form, UploadFile
 from starlette.requests import Request
 
 from mapping_workbench.backend.core.models.api_request import AssignMappingPackagesRequest
@@ -27,6 +27,8 @@ from mapping_workbench.backend.shacl_test_suite.services.api import (
     get_shacl_test_file_resource,
     delete_shacl_test_file_resource
 )
+from mapping_workbench.backend.shacl_test_suite.services.import_shacl_test_suite import \
+    import_shacl_test_suites_from_archive
 from mapping_workbench.backend.shacl_test_suite.services.link import assign_shacl_test_suites_to_mapping_packages
 from mapping_workbench.backend.user.models.user import User
 
@@ -36,6 +38,8 @@ NAME_FOR_MANY = "shacl_test_suites"
 NAME_FOR_ONE = "shacl_test_suite"
 FILE_RESOURCE_NAME_FOR_MANY = "shacl_test_file_resources"
 FILE_RESOURCE_NAME_FOR_ONE = "shacl_test_file_resource"
+
+TASK_IMPORT_SHACL_TEST_SUITES_NAME = f"{NAME_FOR_ONE}:tasks:import"
 
 router = APIRouter(
     prefix=ROUTE_PREFIX,
@@ -133,6 +137,22 @@ async def route_get_shacl_test_suite(shacl_test_suite: SHACLTestSuite = Depends(
 async def route_delete_shacl_test_suite(shacl_test_suite: SHACLTestSuite = Depends(get_shacl_test_suite)):
     await delete_shacl_test_suite(shacl_test_suite)
     return APIEmptyContentWithIdResponse(id=shacl_test_suite.id)
+
+
+@router.post(
+    "/tasks/import",
+    description=f"Import {NAME_FOR_ONE}",
+    name=TASK_IMPORT_SHACL_TEST_SUITES_NAME,
+    status_code=status.HTTP_201_CREATED
+)
+async def route_task_import_shacl_test_suites(
+        project: PydanticObjectId = Form(...),
+        file: UploadFile = Form(...),
+        user: User = Depends(current_active_user)
+):
+    await import_shacl_test_suites_from_archive(project, file, user)
+    return APIEmptyContentResponse()
+
 
 
 @router.get(

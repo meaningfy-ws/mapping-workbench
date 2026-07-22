@@ -39,10 +39,11 @@ class FieldsRegistryApi extends SectionApi {
         return await appApi.post(endpoint, request, null, headers);
     }
 
-    async getItemsTree() {
+    async getItemsTree(wcm) {
         let filters = {}
         if (this.isProjectResource) {
             filters['project'] = sessionApi.getSessionProject();
+            if (wcm) filters['wcm'] = 1
         }
         return await appApi.get(this.paths['elements_tree'], filters);
     }

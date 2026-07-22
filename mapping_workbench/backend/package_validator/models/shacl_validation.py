@@ -30,6 +30,7 @@ class SHACLQueryTestDataEntry(ValidationTestDataEntry):
 
 
 class ValidationSHACLQuery(BaseModel):
+    validation_element_id: Optional[str] = None
     shacl_suite: Optional[SHACLValidationSuiteEntry] = None
     result_path: Optional[str] = None
     short_result_path: Optional[str] = None
@@ -50,6 +51,7 @@ class SHACLGraphResultBinding(BaseModel):
 
 
 class SHACLQueryResultBinding(BaseModel):
+    validation_element_id: Optional[str] = None
     focus_node: Optional[str] = None
     short_focus_node: Optional[str] = None
     result_path: Optional[str] = None

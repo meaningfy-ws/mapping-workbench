@@ -1,5 +1,6 @@
 from typing import List
 
+import pymongo
 from beanie import PydanticObjectId
 from pymongo.errors import DuplicateKeyError
 
@@ -8,8 +9,10 @@ from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersS
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
     api_entity_is_found, prepare_search_param, pagination_params
+from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment, \
-    GenericTripleMapFragmentCreateIn, GenericTripleMapFragmentUpdateIn, GenericTripleMapFragmentOut
+    GenericTripleMapFragmentCreateIn, GenericTripleMapFragmentUpdateIn, GenericTripleMapFragmentOut, \
+    GenericTripleMapFragmentTransformHistory, GenericTripleMapFragmentTransformHistoryOut
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -82,3 +85,19 @@ async def get_generic_triple_map_fragment_out(id: PydanticObjectId) -> GenericTr
 
 async def delete_generic_triple_map_fragment(generic_triple_map_fragment: GenericTripleMapFragment):
     return await generic_triple_map_fragment.delete()
+
+
+async def get_generic_triple_map_fragment_transform_history(
+        generic_triple_map_fragment: GenericTripleMapFragment,
+        project_id: PydanticObjectId
+) -> List[GenericTripleMapFragmentTransformHistoryOut]:
+    Project.link_from_id(project_id)
+    items: List[GenericTripleMapFragmentTransformHistoryOut] = await GenericTripleMapFragmentTransformHistory.find(
+        GenericTripleMapFragmentTransformHistory.project == Project.link_from_id(project_id),
+        GenericTripleMapFragmentTransformHistory.triple_map_id == generic_triple_map_fragment.id,
+        projection_model=GenericTripleMapFragmentTransformHistoryOut,
+        fetch_links=False,
+        sort=[(str(GenericTripleMapFragmentTransformHistory.created_at), pymongo.DESCENDING)]
+    ).to_list()
+
+    return items

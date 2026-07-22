@@ -34,8 +34,12 @@ from mapping_workbench.backend.test_data_suite.services.import_test_data_suite i
     import_test_data_suites_from_archive
 from mapping_workbench.backend.test_data_suite.services.link import assign_test_data_suites_to_mapping_packages
 from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_file_resource
+from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment, \
+    LatestTransformedTestData
 from mapping_workbench.backend.triple_map_fragment.services.api_for_generic import get_generic_triple_map_fragment
 from mapping_workbench.backend.triple_map_fragment.services.api_for_specific import get_specific_triple_map_fragment
+from mapping_workbench.backend.triple_map_fragment.services.generic_triple_map_fragment_transform_history import \
+    add_generic_triple_map_fragment_transform_to_history
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/test_data_suites"
@@ -370,6 +374,23 @@ async def route_transform_test_data_file_resource_with_generic_triple_map(
             user=user,
             silent_exception=False
         )
+        triple_map: GenericTripleMapFragment = await get_generic_triple_map_fragment(generic_triple_map_id)
+        if triple_map:
+            latest_transformed_test_data: LatestTransformedTestData = LatestTransformedTestData(
+                test_data_id=test_data_file_resource.id,
+                mapping_package_id=test_data_file_resource.rdf_manifestation_mapping_package_id,
+                xml_manifestation=test_data_file_resource.content,
+                rdf_manifestation=test_data_file_resource.rdf_manifestation,
+                use_this_triple_map=use_this_triple_map
+            )
+            triple_map.latest_transformed_test_data = latest_transformed_test_data
+
+            await add_generic_triple_map_fragment_transform_to_history(
+                generic_triple_map_fragment=triple_map,
+                project_id=triple_map.project.to_ref().id
+            )
+
+            await triple_map.save()
     except RMLMapperException as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     except Exception:

@@ -1,3 +1,4 @@
+import {useRouter} from 'next/router';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import FileList from '../mapping-package/state/file-list';
@@ -5,16 +6,21 @@ import {useFileNavigation} from '../mapping-package/state/utils';
 import ShaclFileReport from "./shacl_validation_report_file";
 import ShaclTestDatasetReport from "./shacl_validation_report_test_dataset";
 import ShaclPackageStateReport from "./shacl_validation_report_package_state";
+import {DataLoader} from "../../../components/app/loading/data-loader";
 
-const ShaclValidationReportView = ({sid, reportTree, validationReport, handleExport}) => {
+const ShaclValidationReportView = ({reportTree, validationReport, handleExport}) => {
+
+    const router = useRouter()
+    const {sid, packageid, datasetid} = router.query
 
     const {
         selectedPackageState,
         selectedTestDataset,
-        handleSetPackageState,
-        handleSetTestDataset,
         handleSetTestAndPackage
-    } = useFileNavigation(reportTree)
+    } = useFileNavigation(reportTree, 'shacl', packageid, datasetid)
+
+
+    if (!validationReport) return <DataLoader />
 
     return (
 
@@ -27,8 +33,7 @@ const ShaclValidationReportView = ({sid, reportTree, validationReport, handleExp
                           files={reportTree.test_data_suites}
                           selectedPackageState={selectedPackageState}
                           selectedTestDataset={selectedTestDataset}
-                          handleFolderChange={handleSetPackageState}
-                          handleFileChange={handleSetTestDataset}/>
+                          handleFolderAndFileChange={handleSetTestAndPackage}/>
             </Grid>
             {!selectedPackageState &&
                 <ShaclPackageStateReport sid={sid}
@@ -42,14 +47,13 @@ const ShaclValidationReportView = ({sid, reportTree, validationReport, handleExp
                 <ShaclTestDatasetReport sid={sid}
                                         handleExport={handleExport}
                                         handleSelectFile={handleSetTestAndPackage}
-                                        suiteId={selectedPackageState.oid}/>
-
+                                        suiteId={selectedPackageState}/>
             }
             {selectedPackageState && selectedTestDataset &&
                 <ShaclFileReport sid={sid}
                                  handleExport={handleExport}
-                                 suiteId={selectedPackageState.oid}
-                                 testId={selectedTestDataset.oid}/>
+                                 suiteId={selectedPackageState}
+                                 testId={selectedTestDataset}/>
             }
         </Grid>
     )

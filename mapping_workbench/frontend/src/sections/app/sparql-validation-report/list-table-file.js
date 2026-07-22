@@ -14,15 +14,21 @@ import CloseIcon from "@mui/icons-material/Close";
 import Typography from '@mui/material/Typography';
 
 import {Scrollbar} from 'src/components/scrollbar';
-import {getValidationColor, ResultChip} from '../mapping-package/state/utils';
+import {CopyButton, getValidationColor, ResultChip} from '../mapping-package/state/utils';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme"
 import TablePagination from "src/sections/components/table-pagination-pages";
 import {LocalHighlighter} from 'src/sections/components/local-highlighter';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
+import XPathElements from "../xpath-validation-report/xpath-elements";
+import {useRouter} from "../../../hooks/use-router";
+import {useEffect, useState} from "react";
+import CommentsIcon from "@mui/icons-material/CommentBankOutlined";
+import ValidationCommentView from "../mapping-package/state/components/vcomment-view";
+import {prepareExistingValidationComments} from "../mapping-package/state/validation/render-list-comments";
 
-const Condition = ({text, value}) => {
-    const color = value ? 'green' : 'red'
+const Condition = ({text, value, na = false}) => {
+    const color = value ? (na ? 'black' : 'green') : 'red'
     return <span style={{textWrap: 'nowrap'}}>{`${text} `}<b style={{color}}>{`${value}`}</b></span>
 }
 
@@ -39,15 +45,29 @@ export const ListTableFile = (props) => {
         onSort,
         filters,
         onFilter,
-        sectionApi
+        sectionApi,
+        isResultSortable = true,
+        updateItems = null,
+        listItems = []
     } = props;
+
+    const router = useRouter();
+    const {id, sid, tab} = router.query;
+
+    const [existingComments, setExistingComments] = useState({})
+    const [existingCommentsReady, setExistingCommentsReady] = useState(false)
+    const getExistingValidationComments = () => {
+        prepareExistingValidationComments(sectionApi, sid, listItems, setExistingComments, setExistingCommentsReady, updateItems);
+    }
+    useEffect(() => {
+        (!existingCommentsReady && listItems.length > 0) && getExistingValidationComments();
+    }, [listItems, existingCommentsReady]);
 
     const syntaxHighlighterTheme = useHighlighterTheme()
 
     const SorterHeader = (props) => {
-        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
         return (
-            <TableSorterHeader sort={{direction, column: sort.column}}
+            <TableSorterHeader sort={sort}
                                onSort={onSort}
                                {...props}
             />
@@ -70,6 +90,12 @@ export const ListTableFile = (props) => {
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
                         <TableRow>
+                            <TableCell align="center">
+                                <SorterHeader fieldName="nb_comments"
+                                              title={<CommentsIcon/>}
+                                              defaultSortDirection="desc"
+                                />
+                            </TableCell>
                             <TableCell width="15%">
                                 <TableFilterHeader sort={sort}
                                                    onSort={onSort}
@@ -78,68 +104,101 @@ export const ListTableFile = (props) => {
                                                    fieldName="title"
                                                    title="Field"/>
                             </TableCell>
-                            <TableCell align="left">
+                            <TableCell width='30%'>
                                 <TableFilterHeader sort={sort}
                                                    onSort={onSort}
                                                    onFilter={onFilter}
                                                    filters={filters}
-                                                   fieldName="xpath_condition"
+                                                   fieldName="xpath_condition_query"
                                                    title="XPath Condition"/>
                             </TableCell>
                             <TableCell>
-                                <SorterHeader fieldName="description"
-                                              title=""/>
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader fieldName="query"
-                                              title="Query"/>
+                                <TableFilterHeader sort={sort}
+                                                   onSort={onSort}
+                                                   onFilter={onFilter}
+                                                   filters={filters}
+                                                   fieldName="query"
+                                                   title="Query"/>
                             </TableCell>
                             <TableCell align="left">
-                                <SorterHeader fieldName="result"
-                                              title="result"/>
+                                {isResultSortable ? <SorterHeader fieldName="result"
+                                                                  title="result"/> : 'Result'}
                             </TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {items?.map((item, key) => {
                             return (
                                 <TableRow key={key}>
+                                    <TableCell align="center">
+                                        <ValidationCommentView
+                                            state_id={sid}
+                                            validation_element_id={item.validation_element_id}
+                                            comments_count={existingComments[item.validation_element_id]}
+                                            handleUpdate={getExistingValidationComments}
+                                        />
+                                    </TableCell>
                                     <TableCell width="15%">
                                         <Typography variant="subtitle3">
                                             {item.title}
                                         </Typography>
                                     </TableCell>
-                                    <TableCell>
-                                        {item?.xpath_condition?.xpath_condition &&
-                                            <>
+                                    <TableCell width='30%'>
+                                        <>
+                                            <Stack
+                                                direction="column"
+                                                spacing={1}
+                                            >
                                                 <Stack
-                                                    direction="column"
-                                                    spacing={1}
+                                                    direction="row"
+                                                    justifyContent="left"
+                                                    alignItems="center"
+                                                    spacing={2}
                                                 >
-                                                    <Stack
-                                                        direction="row"
-                                                        justifyContent="left"
-                                                        alignItems="center"
-                                                        spacing={2}
-                                                    >
-                                                        <LocalHighlighter language="xquery"
-                                                                          text={item?.xpath_condition?.xpath_condition || '-'}
-                                                                          style={syntaxHighlighterTheme}/>
-                                                        {item?.meets_xpath_condition ?
-                                                            <CheckIcon color="success"/> :
-                                                            <CloseIcon color="error"/>}
-                                                    </Stack>
+                                                    <LocalHighlighter language="xquery"
+                                                                      text={item?.xpath_condition?.xpath_condition || '-'}
+                                                                      width='400px'
+                                                                      style={syntaxHighlighterTheme}/>
+                                                    <Box sx={{p: 1}}>
+                                                        {item?.xpath_condition?.xpath_condition ?
+                                                            <>{item?.meets_xpath_condition ?
+                                                                <CheckIcon color="success"/> :
+                                                                <CloseIcon color="error"/>
+                                                            }</> : <b>N/A</b>
+                                                        }
+                                                    </Box>
                                                 </Stack>
-                                                <Divider sx={{my: 1}}/>
-                                            </>
-                                        }
-                                        <Box sx={{overflowX: 'auto', width: '400px'}}>
-                                            <Typography variant="subtitle3">
-                                                {item.description}
-                                            </Typography>
-                                        </Box>
+                                            </Stack>
+                                            <Divider sx={{my: 1}}/>
+                                        </>
+
+                                        <Stack
+                                            direction="row"
+                                            justifyContent="left"
+                                            alignItems="center"
+                                            spacing={2}
+                                        >
+                                            <Scrollbar sx={{overflowX: 'auto', width: '350px', pb: 1}}>
+                                                <Typography variant="subtitle3">
+                                                    {item.element_xpath}
+                                                </Typography>
+                                            </Scrollbar>
+                                            {item?.element_xpath && <CopyButton text={item.element_xpath}
+                                                                                title="Copy XPATH to clipboard"/>}
+                                            {(item?.test_data && item.test_data.xpaths && item.test_data.xpaths.length > 0 || item.query_results) &&
+                                                <Box align="left">
+                                                    <XPathElements element_id={item.sdk_element_id}
+                                                                   element_xpath={item.element_xpath}
+                                                                   test_data_xpaths={[item.test_data]}
+                                                                   sparql_query={item.select_query}
+                                                                   sparql_query_results={item.query_results}
+                                                    />
+                                                </Box>
+                                            }
+                                        </Stack>
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell width='30%'>
                                         <LocalHighlighter language="sparql"
                                                           style={syntaxHighlighterTheme}
                                                           text={item.query}/>
@@ -153,13 +212,15 @@ export const ListTableFile = (props) => {
                                     <TableCell align="left">
                                         <Box>
                                             <Condition text='Fields covered:'
-                                                       value={item.fields_covered}/>
+                                                       value={item.fields_covered + (item?.test_data?.xpaths?.length > 0 ? " (" + item.test_data.xpaths.length + ")" : "")}/>
                                             <Divider sx={{my: 1}}/>
                                             <Condition text='XPath condition fulfilled:'
-                                                       value={item?.meets_xpath_condition}/>
+                                                       value={item?.xpath_condition?.xpath_condition ? item?.meets_xpath_condition : 'N/A'}
+                                                       na={!item?.xpath_condition?.xpath_condition}
+                                            />
                                             <Divider sx={{my: 1}}/>
                                             <Condition text='Query result:'
-                                                       value={item.query_result}/>
+                                                       value={item.query_result + (item.query_results && item.query_results.length > 0 ? " (" + item.query_results.length + ")" : "")}/>
                                         </Box>
                                     </TableCell>
                                 </TableRow>
@@ -174,14 +235,9 @@ export const ListTableFile = (props) => {
 
 ListTableFile.propTypes = {
     count: PropTypes.number,
-    items:
-    PropTypes.array,
-    onPageChange:
-    PropTypes.func,
-    onRowsPerPageChange:
-    PropTypes.func,
-    page:
-    PropTypes.number,
-    rowsPerPage:
-    PropTypes.number
+    items: PropTypes.array,
+    onPageChange: PropTypes.func,
+    onRowsPerPageChange: PropTypes.func,
+    page: PropTypes.number,
+    rowsPerPage: PropTypes.number
 };

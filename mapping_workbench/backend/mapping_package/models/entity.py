@@ -10,9 +10,9 @@ from pymongo import IndexModel
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleState, \
     ConceptualMappingRule
-from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema, BaseEntity
+from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
-    BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
+    BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema, BaseProjectAbleResourceEntity
 from mapping_workbench.backend.mapping_package import PackageType
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroupState, MappingGroup
 from mapping_workbench.backend.ontology.models.namespace import NamespaceState, Namespace
@@ -62,6 +62,13 @@ class MappingPackageImportIn(MappingPackageIn):
     created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(tzlocal()))
 
 
+class MappingPackageResourcesMetadata(BaseModel):
+    has_assertions: bool = False
+    has_cm_rules: bool = False
+    has_test_data: bool = False
+    has_mappings: bool = False
+
+
 class MappingPackageOut(BaseProjectResourceEntityOutSchema):
     title: Optional[str] = None
     description: Optional[str] = None
@@ -77,10 +84,15 @@ class MappingPackageOut(BaseProjectResourceEntityOutSchema):
     sparql_test_suites: Optional[List[Link[SPARQLTestSuite]]] = None
     resource_collections: Optional[List[Link[ResourceCollection]]] = None
     process_status: Optional[str] = None
+    resources_metadata: Optional[MappingPackageResourcesMetadata] = None
 
 
 class MappingPackageListFilters(BaseTitledEntityListFiltersSchema):
     pass
+
+
+class MappingPackageValidationState(TestDataValidation):
+    test_data_suites: Optional[List[TestDataSuiteState]] = []
 
 
 class MappingPackageState(TestDataValidation, ObjectState):
@@ -129,7 +141,7 @@ class MappingPackageValidationTree(BaseModel):
     test_data_suites: Optional[List[MappingPackageTestDataSuiteValidationTree]] = []
 
 
-class MappingPackageStateGate(BaseEntity):
+class MappingPackageStateGate(BaseProjectAbleResourceEntity):
     id: Optional[PydanticObjectId] = None
     mapping_package_oid: Optional[PydanticObjectId] = None
     title: Optional[str] = None

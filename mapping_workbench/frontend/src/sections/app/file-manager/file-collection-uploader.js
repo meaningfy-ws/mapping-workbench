@@ -26,7 +26,7 @@ export const FileCollectionUploader = (props) => {
         setFiles([]);
     }, [open]);
 
-    const handleUpload = useCallback(() => {
+    const handleUpload = useCallback(async () => {
         nProgress.start();
         const incStep = 100 / files.length;
         let formData;
@@ -35,12 +35,12 @@ export const FileCollectionUploader = (props) => {
             formData.append("file", file);
             formData.append("project", sessionApi.getSessionProject());
             const toastId = toastLoad(`Importing "${file.name}" ... `)
-            sectionApi.importFileCollections(formData)
-                .then(res => toastSuccess(`Successfully imported.`, toastId))
-                .catch(err => {
-                    return toastError(err, toastId)
-                })
-
+            try {
+                await sectionApi.importFileCollections(formData);
+                toastSuccess(`Successfully imported.`, toastId);
+            } catch (err) {
+                toastError(err, toastId)
+            }
             nProgress.inc(incStep);
         }
         nProgress.done();
@@ -85,7 +85,7 @@ export const FileCollectionUploader = (props) => {
                 }}
             >
                 <Typography variant="h6">
-                    Import Test Data Suites
+                    Import {sectionApi.SECTION_TITLE}
                 </Typography>
                 <IconButton
                     color="inherit"
@@ -99,7 +99,7 @@ export const FileCollectionUploader = (props) => {
             <DialogContent id="drop-zone">
                 <FileDropzone
                     accept={{'application/zip': ['.zip']}}
-                    caption="ZIP archive with Test Data Suites"
+                    caption={`ZIP archive with ${sectionApi.SECTION_TITLE}`}
                     files={files}
                     onDrop={handleDrop}
                     onRemove={handleRemove}

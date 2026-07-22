@@ -1,5 +1,6 @@
 import {useEffect} from "react";
 import {FormTextField} from "../../../components/app/form/text-field";
+import {addNsPrefix, extractNamespaces} from "./utils";
 
 const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
 
@@ -9,35 +10,18 @@ const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
     }, [xmlContent, xpath, absolute_xpath]);
 
 
-// Function to extract namespaces from the root element
-    const extractNamespaces = (doc) => {
-        const root = doc.documentElement;
-        const attributes = root.attributes;
-        const namespaces = {};
-
-        for (let i = 0; i < attributes.length; i++) {
-            const attr = attributes[i];
-            if (attr.name.startsWith('xmlns:')) {
-                const prefix = attr.name.split(':')[1];
-                namespaces[prefix] = attr.value;
-            }
-        }
-
-        return namespaces;
-    }
-
-
 // Function to get the relative XPath of a node from a given context node
     const getRelativeXPath = (node, contextNode) => {
         const parts = [];
         while (node && node !== contextNode) {
             if (node.nodeType === Node.ELEMENT_NODE) {
                 const nodeName = node.nodeName;
+                console.log(nodeName)
                 parts.unshift(nodeName);
             }
             node = node.parentNode;
         }
-        parts.shift()
+        console.log(parts.join('/'))
         return parts.join('/');
     }
 
@@ -51,38 +35,30 @@ const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
         const namespaces = extractNamespaces(xmlDoc);
 
         // Function to resolve namespaces in XPath expressions
-        const nsResolver = (prefix) => {
-            return namespaces[prefix] || null;
-        }
+        const nsResolver = (prefix) => namespaces[prefix] || namespaces[""] || null;
 
         try {
-            // console.log(xmlDoc.evaluate(xpathExpr,xmlDoc,nsResolver,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null))
-
-            const contextResult = xmlDoc.evaluate(contextNodeExpr, xmlDoc, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+            const contextResult = xmlDoc.evaluate(addNsPrefix(contextNodeExpr), xmlDoc, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
             const contextNode = contextResult.singleNodeValue;
             if (contextNode) {
-                const result = xmlDoc.evaluate(xpathExpr, xmlDoc, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                const result = xmlDoc.evaluate(addNsPrefix(xpathExpr), xmlDoc, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
                 if (result.snapshotLength > 0) {
                     for (let i = 0; i < result.snapshotLength; i++) {
                         const node = result.snapshotItem(i);
-                        // console.log(node)
                         const relativeXPath = getRelativeXPath(node, contextNode);
-                        // console.log(`Node found: ${node.textContent}`);
-                        // console.log(`Relative XPath: ${relativeXPath}`);
-                        formik.setFieldValue('relative_xpath', relativeXPath)
-
+                        if (relativeXPath) {
+                            formik.setFieldValue('relative_xpath', relativeXPath)
+                            break;
+                        }
                     }
                 } else {
                     formik.setErrors({relative_xpath: 'No nodes found.'})
-                    // console.log('No nodes found.');
                 }
             } else {
                 formik.setErrors({relative_xpath: 'Context node not found.'})
-                // console.log('Context node not found.');
             }
         } catch (err) {
             formik.setErrors({relative_xpath: 'Unable to process xpath.'})
-            // console.error(err)
         }
     }
 

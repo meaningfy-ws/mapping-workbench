@@ -7,7 +7,6 @@ from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.user.models.user import User, Role
 from tests.e2e.backend.api import client, api_endpoint
-from tests.e2e.backend.conftest import dummy_project_object
 
 
 def api_user_email():

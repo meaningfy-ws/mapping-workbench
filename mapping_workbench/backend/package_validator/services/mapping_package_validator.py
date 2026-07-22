@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import List
 
 from beanie import PydanticObjectId
@@ -7,6 +6,7 @@ from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundE
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState, MappingPackageValidationTree
 from mapping_workbench.backend.mapping_package.services.data import get_specific_mapping_package_state
+from mapping_workbench.backend.package_processor.services import TaskToRun
 from mapping_workbench.backend.package_validator.services.shacl_validator import \
     validate_mapping_package_state_with_shacl
 from mapping_workbench.backend.package_validator.services.sparql_validator import \
@@ -17,33 +17,20 @@ from mapping_workbench.backend.task_manager.adapters.task_progress import TaskPr
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataValidationContainer
 
 
-class TaskToRun(Enum):
-    VALIDATE_PACKAGE = "validate_package"
-    VALIDATE_PACKAGE_XPATH = "validate_package_xpath"
-    VALIDATE_PACKAGE_SPARQL = "validate_package_sparql"
-    VALIDATE_PACKAGE_SHACL = "validate_package_shacl"
-
-
 async def validate_mapping_package(
         mapping_package_state: MappingPackageState, tasks_to_run: List[str] = None,
+        include_package_assertions: bool = True,
         task_progress: TaskProgress = None
 ):
     """
     Validate the given mapping package state.
 
+    :param include_package_assertions:
     :param task_progress:
     :param tasks_to_run:
     :param mapping_package_state: The mapping package state to validate.
     :type mapping_package_state: MappingPackageState
     """
-    if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_XPATH.value in tasks_to_run:
-        mwb_logger.log_all_info("Validating Package State ... XPATH")
-        if task_progress is not None:
-            task_progress.start_action_step(name=TaskToRun.VALIDATE_PACKAGE_XPATH.value)
-        compute_xpath_assertions_for_mapping_package(mapping_package_state)
-        if task_progress is not None:
-            task_progress.finish_current_action_step()
-        mwb_logger.log_all_info("Validating Package State ... XPATH DONE")
 
     if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_SHACL.value in tasks_to_run:
         mwb_logger.log_all_info("Validating Package State ... SHACL")
@@ -54,11 +41,23 @@ async def validate_mapping_package(
             task_progress.finish_current_action_step()
         mwb_logger.log_all_info("Validating Package State ... SHACL DONE")
 
+    if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_XPATH.value in tasks_to_run:
+        mwb_logger.log_all_info("Validating Package State ... XPATH")
+        if task_progress is not None:
+            task_progress.start_action_step(name=TaskToRun.VALIDATE_PACKAGE_XPATH.value)
+        compute_xpath_assertions_for_mapping_package(mapping_package_state)
+        if task_progress is not None:
+            task_progress.finish_current_action_step()
+        mwb_logger.log_all_info("Validating Package State ... XPATH DONE")
+
     if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_SPARQL.value in tasks_to_run:
         mwb_logger.log_all_info("Validating Package State ... SPARQL")
         if task_progress is not None:
             task_progress.start_action_step(name=TaskToRun.VALIDATE_PACKAGE_SPARQL.value)
-        validate_mapping_package_state_with_sparql(mapping_package_state)
+        validate_mapping_package_state_with_sparql(
+            mapping_package_state=mapping_package_state,
+            include_package_assertions=include_package_assertions
+        )
         if task_progress is not None:
             task_progress.finish_current_action_step()
         mwb_logger.log_all_info("Validating Package State ... SPARQL DONE")

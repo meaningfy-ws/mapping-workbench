@@ -1,5 +1,6 @@
 from typing import List
 
+from mapping_workbench.backend.core.services.io import unique_hash
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
 from mapping_workbench.backend.package_validator.adapters.xpath_validator import XPATHValidator
@@ -21,7 +22,8 @@ def update_xpath_assertion(
         test_data_state: TestDataState,
         xpaths: List[XPathAssertionEntry],
         validation_message=None,
-        xpath_condition: XPathAssertionCondition = None
+        xpath_condition: XPathAssertionCondition = None,
+        for_summary=False
 ):
     if not state.validation.xpath:
         state.validation.xpath = XPATHTestDataValidationResult()
@@ -31,19 +33,20 @@ def update_xpath_assertion(
     idx = next(
         (
             idx for idx, entry in enumerate(state.validation.xpath.results)
-            if entry.sdk_element_xpath == xpath
+            if entry.sdk_element_xpath == xpath and entry.sdk_element_id == element_id
         ), -1
     )
     if idx < 0:
         state.validation.xpath.results.append(
             XPathAssertion(
+                validation_element_id=unique_hash(xpath, element_id),
                 sdk_element_id=element_id,
                 sdk_element_xpath=xpath,
                 sdk_element_title=element_title,
                 is_covered=False,
                 xpath_conditions=[],
                 test_data_xpaths=[],
-                message=validation_message,
+                message=validation_message
             )
         )
         idx = len(state.validation.xpath.results) - 1
@@ -53,7 +56,8 @@ def update_xpath_assertion(
         test_data_suite,
         test_data_state,
         xpaths,
-        xpath_condition
+        xpath_condition,
+        for_summary
     )
 
 
@@ -63,6 +67,7 @@ def update_xpath_assertion_test_data_entry(
         test_data_state: TestDataState,
         xpaths: List[XPathAssertionEntry],
         xpath_condition: XPathAssertionCondition = None,
+        for_summary=False
 ):
     if not test_data_xpath_assertion.test_data_xpaths:
         test_data_xpath_assertion.test_data_xpaths = []
@@ -95,16 +100,16 @@ def update_xpath_assertion_test_data_entry(
                 if entry.xpath_condition == xpath_condition.xpath_condition
             ), -1
         )
+
         if idx < 0:
             test_data_xpath_assertion.xpath_conditions.append(xpath_condition)
         else:
-            if test_data_xpath_assertion.xpath_conditions[idx]:
+            if for_summary:
                 test_data_xpath_assertion.xpath_conditions[idx].meets_xpath_condition \
                     |= xpath_condition.meets_xpath_condition
             else:
                 test_data_xpath_assertion.xpath_conditions[idx].meets_xpath_condition \
                     &= xpath_condition.meets_xpath_condition
-
     test_data_xpath_assertion.is_covered = (len(test_data_xpath_assertion.test_data_xpaths) > 0)
 
 
@@ -121,6 +126,12 @@ def update_xpath_assertion_test_data_entry_xpaths(
                 if entry.xpath == xpath.xpath and entry.value == xpath.value
         ), -1) < 0:
             test_data_entry.xpaths.append(xpath)
+
+
+def remove_relative_from_xpath(structural_element) -> str:
+    if structural_element.absolute_xpath == structural_element.relative_xpath:
+        return structural_element.absolute_xpath
+    return (structural_element.absolute_xpath or "").removesuffix(structural_element.relative_xpath or "").rstrip('/')
 
 
 def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingPackageState):
@@ -144,26 +155,29 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                 validation_message = None
                 xpaths: List[XPathAssertionEntry] = []
                 matching_elements: XPATHMatchingElements = xpath_validator.validate(cm_xpath)
+
                 try:
                     xpaths = matching_elements.xpath_assertions
                 except Exception as e:
                     validation_message = str(e)
-
                 cm_xpath_condition = conceptual_mapping_rule_state.xpath_condition
                 meets_xpath_condition: bool = True
                 if cm_xpath_condition:
                     meets_xpath_condition = False
                     if TRY_TO_MEET_XPATH_CONDITION:
-                        for matching_element in matching_elements.elements:
-                            element_xpath_validator: XPATHValidator = XPATHValidator(
-                                xml_content=str(matching_element),
-                                namespaces=xpath_validator.namespaces
-                            )
-                            meets_xpath_condition = element_xpath_validator.check_xpath_condition(cm_xpath_condition)
+                        node_xpath = structural_element.absolute_xpath # for nodes the query context is absolute xpath
+                        if structural_element.element_type == 'field':
+                            node_xpath = remove_relative_from_xpath(structural_element)
+                        cond_xpath_validator: XPATHValidator = XPATHValidator(
+                            xml_content=xml_content,
+                            namespaces=xpath_validator.namespaces
+                        )
+                        cond_matching_elements: XPATHMatchingElements = cond_xpath_validator.validate(node_xpath)
+                        for matching_element in cond_matching_elements.elements:
+                            cond_xpath_validator.set_context_node(matching_element)
+                            meets_xpath_condition = cond_xpath_validator.check_xpath_condition(cm_xpath_condition)
                             if meets_xpath_condition:
                                 break
-                    if not meets_xpath_condition:
-                        meets_xpath_condition = xpath_validator.check_xpath_condition(cm_xpath_condition)
 
                 xpath_condition = XPathAssertionCondition(
                     xpath_condition=cm_xpath_condition or '',
@@ -178,7 +192,8 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                     test_data_suite=test_data_suite,
                     test_data_state=test_data_state,
                     xpaths=xpaths,
-                    xpath_condition=xpath_condition
+                    xpath_condition=xpath_condition.model_copy(),
+                    for_summary=True
                 )
                 update_xpath_assertion(
                     state=test_data_suite,
@@ -188,7 +203,8 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                     test_data_suite=test_data_suite,
                     test_data_state=test_data_state,
                     xpaths=xpaths,
-                    xpath_condition=xpath_condition
+                    xpath_condition=xpath_condition.model_copy(),
+                    for_summary=True
                 )
                 update_xpath_assertion(
                     state=test_data_state,
@@ -198,6 +214,6 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                     test_data_suite=test_data_suite,
                     test_data_state=test_data_state,
                     xpaths=xpaths,
-                    xpath_condition=xpath_condition,
+                    xpath_condition=xpath_condition.model_copy(),
                     validation_message=validation_message
                 )

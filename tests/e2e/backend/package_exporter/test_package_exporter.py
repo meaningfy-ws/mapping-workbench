@@ -28,6 +28,7 @@ async def test_exporter(dummy_project: Project):
         sdk_element_id="ND-Root",
         absolute_xpath="/*",
         project=project_link,
+        versions=['1.3.0'],
         created_at=now
     ).save()
 
@@ -37,6 +38,7 @@ async def test_exporter(dummy_project: Project):
         bt_id="BT-02",
         absolute_xpath="/*/cbc:NoticeTypeCode",
         project=project_link,
+        versions=['1.3.2'],
         created_at=now
     ).save()
 
@@ -46,6 +48,7 @@ async def test_exporter(dummy_project: Project):
         bt_id="OPT-001",
         absolute_xpath="/*/cbc:UBLVersionID",
         project=project_link,
+        versions=['1.3.4'],
         created_at=now
     ).save()
 

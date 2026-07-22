@@ -11,7 +11,7 @@ import {CoverageFilter, TableLoadWrapper} from "./utils";
 import ResultSummaryCoverage from './result-summary-coverage';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
-const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handleSelectFile, handleExport}) => {
+const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handleFolderAndFileChange, handleExport}) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataState, setDataState] = useState({load: true, error: false})
 
@@ -32,7 +32,10 @@ const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handl
             })
     }
 
-    const itemsSearch = useItemsSearch(validationReport, sectionApi, [], {is_covered: ''});
+    const itemsSearch = useItemsSearch(validationReport, sectionApi, [], {is_covered: ''}, null, {
+        "nb_comments": "desc",
+        "notice_count": "desc"
+    });
 
     const handleCoverageFilterChange = e => itemsSearch.handleFiltersChange({is_covered: e})
 
@@ -74,8 +77,10 @@ const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handl
                             sort={itemsSearch.state.sort}
                             onFilter={itemsSearch.handleFiltersChange}
                             filters={itemsSearch.state.filters}
-                            handleSelectFile={handleSelectFile}
+                            handleSelectFile={handleFolderAndFileChange}
                             sectionApi={sectionApi}
+                            updateItems={setValidationReport}
+                            listItems={itemsSearch.filteredItems}
                         />
                     </TableLoadWrapper>
                 </Card>

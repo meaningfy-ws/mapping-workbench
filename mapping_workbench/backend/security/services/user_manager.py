@@ -1,7 +1,7 @@
 from typing import Optional
 
 from beanie import PydanticObjectId
-from fastapi import Depends, Request, HTTPException, status
+from fastapi import Depends, Request, Response
 from fastapi_users import BaseUserManager, FastAPIUsers
 from fastapi_users.authentication import (
     AuthenticationBackend,
@@ -9,9 +9,13 @@ from fastapi_users.authentication import (
     JWTStrategy,
 )
 from fastapi_users.db import BeanieUserDatabase, ObjectIDIDMixin
+from jose import jwt
 
 from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.security.adapters.user_session import get_user_db
+from mapping_workbench.backend.security.services.exceptions import throw_403_exception
+from mapping_workbench.backend.tracking.models.tracking import ActivityType, ActivityMedata, EntityType
+from mapping_workbench.backend.tracking.services.tracking import track_user, track_activity
 from mapping_workbench.backend.user.models.user import User, Role
 
 JWT_SECRET = settings.JWT_SECRET
@@ -24,7 +28,22 @@ class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
     verification_token_secret = JWT_SECRET
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
+        await track_user(user)
         print(f"User {user.id} has registered.")
+
+    async def on_after_login(
+            self,
+            user: User,
+            request: Optional[Request] = None,
+            response: Optional[Response] = None
+    ):
+        if Role.API not in user.roles:
+            await track_activity(ActivityType.LOGIN, user, ActivityMedata(
+                entity_type=EntityType.USER,
+                entity_id=str(user.id),
+                entity_name=user.email
+            ))
+        print(f"User {user.id} has logged in.")
 
     async def on_after_forgot_password(
             self, user: User, token: str, request: Optional[Request] = None
@@ -59,14 +78,33 @@ fastapi_users = FastAPIUsers[User, PydanticObjectId](get_user_manager, [auth_bac
 current_active_user = fastapi_users.current_user(active=True, verified=True)
 current_user = fastapi_users.current_user(active=True)
 
+
 async def get_current_active_admin_user(
         user: User = Depends(current_active_user)
 ) -> User:
     if not user.is_superuser and (not user.roles or Role.ADMIN not in user.roles):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="The user cannot perform this action",
-        )
+        throw_403_exception()
     return user
 
+
 current_active_admin_user = get_current_active_admin_user
+
+
+async def generate_jwt_token(username: str):
+    user = await User.find_one(User.email == username)
+    if not user:
+        raise ValueError("User not found")
+    lifetime_seconds = 60 * 60 * 24 * 365  # 1 year
+    jwt_strategy = JWTStrategy(secret=JWT_SECRET, lifetime_seconds=lifetime_seconds, algorithm=JWT_ALGORITHM)
+    return await jwt_strategy.write_token(user)
+
+
+def decode_jwt_token(token: str):
+    decoded = jwt.decode(
+        token,
+        JWT_SECRET,
+        algorithms=[JWT_ALGORITHM],
+        options={"verify_signature": True},
+        audience="fastapi-users:auth"
+    )
+    return decoded

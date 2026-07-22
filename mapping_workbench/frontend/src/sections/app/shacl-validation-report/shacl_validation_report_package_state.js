@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState, useMemo} from "react";
 
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
@@ -16,11 +16,25 @@ const FILTER_VALUES = ['info', 'valid', 'violation', 'warning'].map(value => ({v
 const ShaclPackageStateReport = ({handleSelectFile, mappingSuiteIdentifier, validationReport, handleExport}) => {
     const [resultFilter, setResultFilter] = useState('')
 
-    const filteredItems = validationReport.filter((item) => !resultFilter || item[resultFilter] > 0)
+    const [listItems, setListItems] = useState(validationReport || []);
 
-    const handleResultFilterChange = e => setResultFilter(e.target.value)
+    useEffect(() => {
+        setListItems(validationReport || []);
+    }, [validationReport]);
 
-    const itemsSearch = useItemsSearch(filteredItems, sectionApi);
+    const filteredItems = useMemo(
+        () => listItems.filter((item) => !resultFilter || item[resultFilter] > 0),
+        [listItems, resultFilter]
+    );
+
+    const handleResultFilterChange = e => {
+        setResultFilter(e.target.value);
+        itemsSearch.handleFilterResultChange();
+    }
+
+    const itemsSearch = useItemsSearch(filteredItems, sectionApi, [], {result: ''}, null, {
+        "nb_comments": "desc"
+    });
 
     return (
         <>
@@ -28,7 +42,7 @@ const ShaclPackageStateReport = ({handleSelectFile, mappingSuiteIdentifier, vali
                   md={8}>
                 <ResultSummaryCoverage handleExport={handleExport}
                                        identifier={mappingSuiteIdentifier}
-                                       validationReport={validationReport}/>
+                                       validationReport={listItems}/>
             </Grid>
             <Grid xs={12}>
                 <Paper>
@@ -38,7 +52,7 @@ const ShaclPackageStateReport = ({handleSelectFile, mappingSuiteIdentifier, vali
                            sx={{mx: 3}}>
                         <Typography fontWeight='bold'>Assertions</Typography>
                         <ResultFilter values={FILTER_VALUES}
-                                      count={validationReport.length}
+                                      count={listItems.length}
                                       onStateChange={handleResultFilterChange}
                                       currentState={resultFilter}/>
                     </Stack>
@@ -56,6 +70,8 @@ const ShaclPackageStateReport = ({handleSelectFile, mappingSuiteIdentifier, vali
                         resultFilter={resultFilter}
                         sectionApi={sectionApi}
                         handleSelectFile={handleSelectFile}
+                        updateItems={setListItems}
+                        listItems={itemsSearch.filteredItems}
                     />
                 </Paper>
             </Grid>

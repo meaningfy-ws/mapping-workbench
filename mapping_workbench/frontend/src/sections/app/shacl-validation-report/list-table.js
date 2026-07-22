@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import PropTypes from 'prop-types';
 
 import Table from '@mui/material/Table';
@@ -20,6 +20,10 @@ import TablePagination from "src/sections/components/table-pagination-pages";
 import {LocalHighlighter} from 'src/sections/components/local-highlighter';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
+import {useRouter} from "../../../hooks/use-router";
+import CommentsIcon from "@mui/icons-material/CommentBankOutlined";
+import ValidationCommentView from "../mapping-package/state/components/vcomment-view";
+import {prepareExistingValidationComments} from "../mapping-package/state/validation/render-list-comments";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
@@ -38,8 +42,22 @@ export const ListTable = (props) => {
         onFilter,
         resultFilter,
         sectionApi,
-        handleSelectFile
+        handleSelectFile,
+        updateItems = null,
+        listItems = []
     } = props;
+
+    const router = useRouter();
+    const {id, sid, tab} = router.query;
+
+    const [existingComments, setExistingComments] = useState({})
+    const [existingCommentsReady, setExistingCommentsReady] = useState(false)
+    const getExistingValidationComments = () => {
+        prepareExistingValidationComments(sectionApi, sid, listItems, setExistingComments, setExistingCommentsReady, updateItems);
+    }
+    useEffect(() => {
+        (!existingCommentsReady && listItems.length > 0) && getExistingValidationComments();
+    }, [listItems, existingCommentsReady]);
 
     const handleClose = () => setDescriptionDialog(e => ({...e, open: false}));
 
@@ -65,6 +83,12 @@ export const ListTable = (props) => {
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
                             <TableRow>
+                                <TableCell align="center">
+                                    <SorterHeader fieldName="nb_comments"
+                                                  title={<CommentsIcon/>}
+                                                  defaultSortDirection="desc"
+                                    />
+                                </TableCell>
                                 <TableCell>
                                     <TableFilterHeader sort={sort}
                                                        onSort={onSort}
@@ -104,6 +128,14 @@ export const ListTable = (props) => {
                             {items?.map((item, key) => {
                                 return (
                                     <TableRow key={key}>
+                                        <TableCell align="center">
+                                            <ValidationCommentView
+                                                state_id={sid}
+                                                validation_element_id={item.validation_element_id}
+                                                comments_count={existingComments[item.validation_element_id]}
+                                                handleUpdate={getExistingValidationComments}
+                                            />
+                                        </TableCell>
                                         <TableCell>
                                             {item.shacl_suite}
                                         </TableCell>

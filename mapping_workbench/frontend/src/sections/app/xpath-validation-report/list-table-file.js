@@ -1,5 +1,7 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import PropTypes from 'prop-types';
+
+import CommentsIcon from '@mui/icons-material/CommentBankOutlined';
 
 import Stack from "@mui/material/Stack";
 import Table from '@mui/material/Table';
@@ -24,6 +26,11 @@ import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from "src/sections/components/table-pagination-pages";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
+import XPathElements from "./xpath-elements";
+import Box from "@mui/system/Box";
+import ValidationCommentView from "../mapping-package/state/components/vcomment-view";
+import {useRouter} from "../../../hooks/use-router";
+import {prepareExistingValidationComments} from "../mapping-package/state/validation/render-list-comments";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
@@ -40,8 +47,30 @@ export const ListTable = (props) => {
         onSort,
         sort,
         onFilter,
-        filters
+        filters,
+        updateItems = null,
+        listItems = []
     } = props;
+
+    const router = useRouter();
+    const {id, sid, tab} = router.query;
+
+    const [existingComments, setExistingComments] = useState({})
+    const [existingCommentsReady, setExistingCommentsReady] = useState(false)
+    const getExistingValidationComments = () => {
+        prepareExistingValidationComments(
+            sectionApi,
+            sid,
+            listItems,
+            setExistingComments,
+            setExistingCommentsReady,
+            updateItems
+        );
+
+    }
+    useEffect(() => {
+        (!existingCommentsReady && listItems.length > 0) && getExistingValidationComments();
+    }, [listItems, existingCommentsReady]);
 
     const handleClose = () => setDescriptionDialog(e => ({...e, open: false}));
 
@@ -67,6 +96,12 @@ export const ListTable = (props) => {
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
                             <TableRow>
+                                <TableCell align="center">
+                                    <SorterHeader fieldName="nb_comments"
+                                                  title={<CommentsIcon/>}
+                                                  defaultSortDirection="desc"
+                                    />
+                                </TableCell>
                                 <TableCell width="25%">
                                     <TableFilterHeader sort={sort}
                                                        onSort={onSort}
@@ -84,8 +119,7 @@ export const ListTable = (props) => {
                                                        title="XPath"/>
                                 </TableCell>
                                 <TableCell align="left">
-                                    <SorterHeader fieldName="xpath_condition"
-                                                  title="XPath Condition"/>
+                                    XPath Condition
                                 </TableCell>
                                 <TableCell width="10%">
                                     <SorterHeader fieldName="is_covered"
@@ -97,15 +131,38 @@ export const ListTable = (props) => {
                             {items?.map((item, key) => {
                                 return (
                                     <TableRow key={key}>
+                                        <TableCell align="center">
+                                            <ValidationCommentView
+                                                state_id={sid}
+                                                validation_element_id={item.validation_element_id}
+                                                comments_count={existingComments[item.validation_element_id]}
+                                                handleUpdate={getExistingValidationComments}
+                                            />
+                                        </TableCell>
                                         <TableCell width="25%">
                                             <Typography variant="subtitle3">
                                                 {item.sdk_element_id}
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            <LocalHighlighter language="xquery"
-                                                              style={highLighterTheme}
-                                                              text={item.sdk_element_xpath}/>
+                                            <Stack
+                                                direction="row"
+                                                justifyContent="left"
+                                                alignItems="center"
+                                                spacing={2}
+                                            >
+                                                <LocalHighlighter language="xquery"
+                                                                  style={highLighterTheme}
+                                                                  text={item.sdk_element_xpath}/>
+                                                {item?.test_data_xpaths && item.test_data_xpaths.length > 0 &&
+                                                    <Box align="left">
+                                                        <XPathElements element_id={item.sdk_element_id}
+                                                                       element_xpath={item.sdk_element_xpath}
+                                                                       test_data_xpaths={item.test_data_xpaths}
+                                                        />
+                                                    </Box>
+                                                }
+                                            </Stack>
                                         </TableCell>
                                         <TableCell align="right">
                                             {item.xpath_conditions?.map((xpath_condition, key) =>

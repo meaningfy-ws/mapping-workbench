@@ -56,6 +56,7 @@ export const FileUploader = (props) => {
                         triple_map_uri: file.name,
                         format: format,
                         triple_map_content: res,
+                        refers_to_mapping_package_ids: null,
                         project: sessionApi.getSessionProject()
                     }
 

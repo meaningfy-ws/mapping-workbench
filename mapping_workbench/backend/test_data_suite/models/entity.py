@@ -52,7 +52,7 @@ class TestDataValidationContainer(BaseModel):
 
 
 class TestDataValidation(BaseModel):
-    validation: Optional[TestDataValidationContainer] = TestDataValidationContainer()
+    validation: Optional[TestDataValidationContainer] = Field(default_factory=TestDataValidationContainer)
 
 
 class TestDataState(TestDataValidation, ObjectState):
@@ -87,6 +87,11 @@ class TestDataFileResource(FileResource, StatefulObjectABC):
     format: Optional[TestDataFileResourceFormat] = None
     test_data_suite: Optional[Link["TestDataSuite"]] = None
     rdf_manifestation: Optional[str] = None
+    rdf_manifestation_mapping_package_id: Optional[PydanticObjectId] = None
+
+    @classmethod
+    async def get_for_state(cls, test_data_state: TestDataState) -> "TestDataFileResource":
+        return await cls.get(test_data_state.oid)
 
     async def get_state(self) -> TestDataState:
         oid = self.id
@@ -141,7 +146,7 @@ class TestDataSuiteState(TestDataValidation, ObjectState):
     title: Optional[str] = None
     description: Optional[str] = None
     path: Optional[List[str]] = None
-    test_data_states: Optional[List[TestDataState]] = []
+    test_data_states: Optional[List[TestDataState]] = Field(default_factory=list)
 
 
 class TestDataSuite(
@@ -149,7 +154,7 @@ class TestDataSuite(
     BaseMappingPackagesResourceSchemaTrait,
     StatefulObjectABC
 ):
-    file_resources: Optional[List[Link[TestDataFileResource]]] = []
+    file_resources: Optional[List[Link[TestDataFileResource]]] = Field(default_factory=list)
 
     async def get_test_data_states(self) -> List[TestDataState]:
         test_data_file_resources = await TestDataFileResource.find(

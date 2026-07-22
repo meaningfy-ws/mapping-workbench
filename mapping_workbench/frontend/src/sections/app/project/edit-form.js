@@ -1,34 +1,34 @@
-import PropTypes from 'prop-types';
+import {useState} from "react";
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
+import PropTypes from 'prop-types';
 
-import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
+import Box from "@mui/system/Box";
 import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
-import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
+import Alert from "@mui/material/Alert";
+import Button from '@mui/material/Button';
+import Divider from "@mui/material/Divider";
 import Checkbox from '@mui/material/Checkbox'
-import FormControlLabel from "@mui/material/FormControlLabel";
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
 import FormGroup from "@mui/material/FormGroup";
+import Grid from '@mui/material/Unstable_Grid2';
+import CardHeader from '@mui/material/CardHeader';
 import Typography from "@mui/material/Typography";
+import CardContent from '@mui/material/CardContent';
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 import {paths} from 'src/paths';
-import {useRouter} from 'src/hooks/use-router';
 import {useProjects} from "src/hooks/use-projects";
 import {RouterLink} from 'src/components/router-link';
-import {FormTextField} from "src/components/app/form/text-field";
-import {FormTextArea} from "src/components/app/form/text-area";
-import {fieldsRegistryApi} from "src/api/fields-registry";
 import {ontologyTermsApi} from "src/api/ontology-terms";
+import {fieldsRegistryApi} from "src/api/fields-registry";
+import {mappingPackagesApi} from "src/api/mapping-packages";
+import {FormTextArea} from "src/components/app/form/text-area";
+import {FormTextField} from "src/components/app/form/text-field";
+import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
-import {Box} from "@mui/system";
-import {mappingPackagesApi} from "../../../api/mapping-packages";
-import ConfirmDialog from "../../../components/app/dialog/confirm-dialog";
-import {useState} from "react";
-import Alert from "@mui/material/Alert";
 
 export const EditForm = (props) => {
     const {itemctx, ...other} = props;
@@ -36,15 +36,25 @@ export const EditForm = (props) => {
     const item = itemctx.data;
     const projectsStore = useProjects()
     const [confirmOpen, setConfirmOpen] = useState(false);
+    const [fieldsErrors, setFieldsErrors] = useState([]);
 
     const sourceSchemaTypes = [
         {
-            value: 'JSON',
-            label: 'JSON (eForms)'
+            value: 'XSD',
+            label: 'XML'
         },
         {
-            value: 'XSD',
-            label: 'XSD'
+            value: 'JSON',
+            label: 'XML (eForms)'
+        },
+        {
+            label: <span>JSON<i>(In development)</i></span>
+        },
+        {
+            label: <span>CSV<i>(In development)</i></span>
+        },
+        {
+            label: <span>SQL (MySQL/PostgreSQL)<i>(In development)</i></span>
         }
     ];
 
@@ -111,6 +121,27 @@ export const EditForm = (props) => {
     //         .catch(err => toastError(err.message, toastId))
     // }
 
+    const validateImportFieldRegistry = async (values) => {
+        const validatedVersions = await fieldsRegistryApi.validateImportEFormsXSD(values);
+        let formFieldsErrors = []
+        if (validatedVersions) {
+            if (!!validatedVersions?.duplicates_found?.length) {
+                formFieldsErrors.push("[" + validatedVersions.duplicates_found.join(', ') + "]: Duplicate(s)");
+            }
+            if (!!validatedVersions?.invalid_formats?.length) {
+                formFieldsErrors.push("[" + validatedVersions.invalid_formats.join(', ') + "]: Invalid version(s)");
+            }
+            if (!!validatedVersions?.not_in_remote_repo?.length) {
+                formFieldsErrors.push("[" + validatedVersions.not_in_remote_repo.join(', ') + "] version(s) not found in the remote repository.");
+            }
+            if (validatedVersions?.invalid_repo_url) {
+                formFieldsErrors.push("Invalid GitHub repository URL");
+            }
+            setFieldsErrors(formFieldsErrors);
+        }
+        return formFieldsErrors.length === 0;
+    };
+
     const formik = useFormik({
         initialValues,
         validationSchema: Yup.object({
@@ -134,10 +165,14 @@ export const EditForm = (props) => {
             try {
                 let response;
                 if (itemctx.isNew) {
-                    response = await sectionApi.createItem(projectValues);
-                    if (formik.values.with_default_mapping_package) {
-                        await mappingPackagesApi.createDefault(response._id);
-                        toastSuccess(`Default Package created`, toastId);
+                    if (!formik.values.import_eform.checked || await validateImportFieldRegistry(import_eform)) {
+                        response = await sectionApi.createItem(projectValues);
+                        if (formik.values.with_default_mapping_package) {
+                            await mappingPackagesApi.createDefault(response._id);
+                            toastSuccess(`Default Package created`, toastId);
+                        }
+                    } else {
+                        throw new Error(`Creating Project with Importing eForm Fields canceled.`);
                     }
                 } else {
                     projectValues['id'] = item._id;
@@ -170,7 +205,6 @@ export const EditForm = (props) => {
                     }
                 }
             } catch (err) {
-                console.error(err);
                 toastError(err, toastId);
                 helpers.setStatus({success: false});
                 helpers.setErrors({submit: err.message});
@@ -346,8 +380,9 @@ export const EditForm = (props) => {
                                     onChange={formik.handleChange}
                                     value={formik.values.source_schema.type}
                                 >
-                                    {sourceSchemaTypes.map((option) => (
+                                    {sourceSchemaTypes.map(option => (
                                         <MenuItem key={option.value}
+                                                  disabled={!option.value}
                                                   value={option.value}>
                                             {option.label}
                                         </MenuItem>
@@ -370,7 +405,6 @@ export const EditForm = (props) => {
                                                        name="with_default_mapping_package"/>
                                     }
                                     label={<Typography variant='h6'>Create DEFAULT Package</Typography>}
-
                                 />
                             </FormGroup>
                         </Grid>
@@ -407,6 +441,15 @@ export const EditForm = (props) => {
                                     </FormGroup>
                                     {formik.values.import_eform.checked &&
                                         <>
+                                            {fieldsErrors.length > 0 &&
+                                                <Grid xs={12}
+                                                      md={12}>
+                                                    <Divider sx={{mb: 2}}/>
+                                                    {fieldsErrors.map((error, idx) =>
+                                                        <Alert severity="error" key={idx}>{error}</Alert>
+                                                    )}
+                                                    <Divider sx={{mt: 2}}/>
+                                                </Grid>}
                                             <Grid xs={12}
                                                   md={12}>
                                                 <FormTextField formik={formik}

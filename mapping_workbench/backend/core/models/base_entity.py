@@ -15,7 +15,7 @@ class BaseEntity(Document):
     """
     The general model for entities
     """
-    created_at: Annotated[datetime, Field(default_factory=lambda: datetime.now(tzlocal()))]
+    created_at: Annotated[Optional[datetime], Field(default_factory=lambda: datetime.now(tzlocal()))]
     updated_at: Optional[datetime] = None
     created_by: Optional[Link[User]] = None
     updated_by: Optional[Link[User]] = None

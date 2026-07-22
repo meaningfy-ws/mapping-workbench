@@ -1,3 +1,5 @@
+from packaging.version import Version
+
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
     ConceptualMappingRuleComment
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
@@ -8,7 +10,8 @@ from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup
 from mapping_workbench.backend.package_importer.adapters.importer_abc import PackageImporterABC
-from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
+from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite, \
+    EFormsMappingConceptualRule
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.tasks.models.task_response import TaskResponse, TaskResultWarning
 from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment
@@ -59,14 +62,13 @@ class EFormsPackageImporter(PackageImporterABC):
     async def import_sdk_fields(self, eforms_sdk_versions: list):
         if self.with_import_sdk_fields:
             await import_eforms_xsd(
-                branch_or_tag_name = ', '.join(await get_latest_eforms_versions_in_remote_repo(
+                branch_or_tag_name=', '.join(await get_latest_eforms_versions_in_remote_repo(
                     self.sdk_fields_github_repository_url,
                     eforms_sdk_versions
                 )),
-                github_repository_url = self.sdk_fields_github_repository_url,
-                project_link = self.project_link
+                github_repository_url=self.sdk_fields_github_repository_url,
+                project_link=self.project_link
             )
-
 
     async def add_mapping_groups_from_mono(self, mono_package: ImportedMappingSuite):
         self.task_progress.start_action_step(name="add_mapping_groups")
@@ -93,14 +95,26 @@ class EFormsPackageImporter(PackageImporterABC):
 
         self.task_progress.finish_current_action_step()
 
+    @classmethod
+    def get_mapping_rule_sdk_version(cls, cm_rule: EFormsMappingConceptualRule, versions: list):
+        if cm_rule.max_sdk_version:
+            return cm_rule.max_sdk_version
+
+        if cm_rule.min_sdk_version:
+            versions.append(cm_rule.min_sdk_version)
+        return max(versions, key=Version)
+
     async def add_mapping_rules_from_mono(self, mono_package: ImportedMappingSuite):
         self.task_progress.start_action_step(name="add_mapping_rules")
 
+        package_versions = mono_package.metadata.eforms_sdk_versions or []
         sort_order: int = 0
         for mono_rule in mono_package.conceptual_rules:
+            sdk_version = self.get_mapping_rule_sdk_version(mono_rule, package_versions)
             source_structural_element: StructuralElement = await get_structural_element_by_unique_fields(
                 sdk_element_id=mono_rule.eforms_sdk_id,
                 absolute_xpath=mono_rule.absolute_xpath,
+                sdk_version=sdk_version,
                 project_id=self.project.id,
                 # bt_id=mono_rule.bt_id,
                 # name=mono_rule.field_name
@@ -108,28 +122,29 @@ class EFormsPackageImporter(PackageImporterABC):
 
             if not source_structural_element:
                 m = f"{mono_rule.eforms_sdk_id}"
-                mwb_logger.log_all_warning(m)
+                mwb_logger.log_all_warning(f"Not Found SDK Element: {m}")
                 self.warnings.append(TaskResultWarning(message=m, type="Not Found SDK Elements"))
                 continue
 
             if source_structural_element.bt_id != mono_rule.bt_id:
                 m = f"{mono_rule.eforms_sdk_id}, {source_structural_element.bt_id} <> {mono_rule.bt_id}, {mono_rule.absolute_xpath}"
                 mwb_logger.log_all_warning(m)
-                self.warnings.append(TaskResultWarning(message=m, type="CM(sdk_id, sdk_bt_id <> bt_id, xpath) BT ID Mismatch"))
+                self.warnings.append(
+                    TaskResultWarning(message=m, type="CM(sdk_id, sdk_bt_id <> bt_id, xpath) BT ID Mismatch"))
 
             if source_structural_element.name != mono_rule.field_name:
                 m = f"Field[{source_structural_element.sdk_element_id}] has Imported Name ({mono_rule.field_name}) <> Current Name ({source_structural_element.name})"
-                mwb_logger.log_all_warning(m)
+                mwb_logger.log_all_warning(f"Field Name Mismatch: {m}")
                 self.warnings.append(TaskResultWarning(message=m, type="Field Name Mismatch"))
 
             if not self.is_cm_rule_path_valid(mono_rule.class_path):
                 m = f"{mono_rule.class_path}"
-                mwb_logger.log_all_warning(m)
+                mwb_logger.log_all_warning(f"Class Path Mismatch: {m}")
                 self.warnings.append(TaskResultWarning(message=m, type="Class Path Mismatch"))
 
             if not self.is_cm_rule_path_valid(mono_rule.property_path):
                 m = f"{mono_rule.property_path}"
-                mwb_logger.log_all_warning(m)
+                mwb_logger.log_all_warning(f"Property Path Mismatch: {m}")
                 self.warnings.append(TaskResultWarning(message=m, type="Property Path Mismatch"))
 
             # A conceptual mapping rule may have same structural element but different Ontology Fragment

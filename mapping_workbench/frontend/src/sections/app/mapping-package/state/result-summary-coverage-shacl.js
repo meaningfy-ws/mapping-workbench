@@ -8,10 +8,12 @@ import Typography from '@mui/material/Typography';
 
 import {StatePieChart} from './state-pie-chart';
 import {getValidationColor, getValidationReportShacl} from './utils';
+import CircularProgress from "@mui/material/CircularProgress";
+import {DataLoader} from "../../../../components/app/loading/data-loader";
 
 const ResultSummaryCoverageShacl = ({validationReport, handleChangeTab}) => {
     const theme = useTheme()
-    if (!validationReport) return null
+    if (!validationReport) return <DataLoader />
 
     const {itemsTotal, ...itemsReduce} = getValidationReportShacl(validationReport)
 

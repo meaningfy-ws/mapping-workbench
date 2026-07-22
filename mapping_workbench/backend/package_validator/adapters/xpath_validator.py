@@ -5,7 +5,7 @@ from xml.etree import ElementTree
 
 from pydantic import validate_call
 from saxonche import PySaxonProcessor, PySaxonApiError, PyXPathProcessor, PyXdmNode, PyXdmValue, XdmNodeKind, \
-    PyXQueryProcessor
+    PyXQueryProcessor, PyXdmItem
 
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
@@ -38,11 +38,15 @@ class XPATHValidator(TestDataValidator):
     def check_xpath_condition(self, xquery_expression) -> bool:
         if not xquery_expression:
             return True
-
         try:
             self.xqp.set_query_content(xquery_expression)
             result: PyXdmValue = self.xqp.run_query_to_value()
-            return str(result) == 'true'
+            if not result or result.size == 0:
+                return False
+            if hasattr(result.head, "boolean_value"):
+                return result.head.boolean_value
+            # Fallback: non-empty sequence is considered True
+            return True
         except PySaxonApiError as e:
             mwb_logger.log_all_error(str(e), str(e))
             return False
@@ -92,11 +96,14 @@ class XPATHValidator(TestDataValidator):
             ns, url = elem
             if ns == '':
                 ns = self.DEFAULT_XML_NS_PREFIX
-            namespaces[ns] = url
+            if url:
+                namespaces[ns] = url
         return namespaces
 
-    def init_xp_processors(self, xml_content: str):
+    def set_context_node(self, context_node: PyXdmItem):
+        self.xqp.set_context(xdm_item=context_node)
 
+    def init_xp_processors(self, xml_content: str):
         self.xpp: PyXPathProcessor = self.xp.new_xpath_processor()
         self.xqp: PyXQueryProcessor = self.xp.new_xquery_processor()
 
@@ -127,7 +134,8 @@ class XPATHValidator(TestDataValidator):
                 if xpath:
                     xpath_assertions.append(XPathAssertionEntry(
                         xpath=xpath,
-                        value=self.get_node_text_value(xpath_node)
+                        value=self.get_node_text_value(xpath_node),
+                        element=str(element)
                     ))
 
         return XPATHMatchingElements(

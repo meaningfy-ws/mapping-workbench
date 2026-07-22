@@ -11,6 +11,12 @@ import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from 'src/sections/components/table-pagination-pages';
 import {LocalHighlighter} from 'src/sections/components/local-highlighter';
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
+import {useRouter} from "../../../hooks/use-router";
+import {useEffect, useState} from "react";
+import CommentsIcon from "@mui/icons-material/CommentBankOutlined";
+import ValidationCommentView from "../mapping-package/state/components/vcomment-view";
+import {prepareExistingValidationComments} from "../mapping-package/state/validation/render-list-comments";
+import {SorterHeader} from "./utils";
 
 
 export const ListTableFile = (props) => {
@@ -26,8 +32,22 @@ export const ListTableFile = (props) => {
         onSort,
         filters,
         onFilter,
-        sectionApi
+        sectionApi,
+        updateItems = null,
+        listItems = []
     } = props;
+
+    const router = useRouter();
+    const {id, sid, tab} = router.query;
+
+    const [existingComments, setExistingComments] = useState({})
+    const [existingCommentsReady, setExistingCommentsReady] = useState(false)
+    const getExistingValidationComments = () => {
+        prepareExistingValidationComments(sectionApi, sid, listItems, setExistingComments, setExistingCommentsReady, updateItems);
+    }
+    useEffect(() => {
+        (!existingCommentsReady && listItems.length > 0) && getExistingValidationComments();
+    }, [listItems, existingCommentsReady]);
 
     const syntaxHighlighterTheme = useHighlighterTheme()
 
@@ -45,6 +65,15 @@ export const ListTableFile = (props) => {
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
                         <TableRow>
+                            <TableCell align="center">
+                                <SorterHeader sort={sort}
+                                              onSort={onSort}
+                                              fieldName="nb_comments"
+                                              title={<CommentsIcon/>}
+                                              defaultSortDirection="desc"
+
+                                />
+                            </TableCell>
                             <TableCell>
                                 <TableFilterHeader sort={sort}
                                                    onSort={onSort}
@@ -91,6 +120,14 @@ export const ListTableFile = (props) => {
                         {items?.map((item, key) => {
                             return (
                                 <TableRow key={key}>
+                                    <TableCell align="center">
+                                        <ValidationCommentView
+                                            state_id={sid}
+                                            validation_element_id={item.validation_element_id}
+                                            comments_count={existingComments[item.validation_element_id]}
+                                            handleUpdate={getExistingValidationComments}
+                                        />
+                                    </TableCell>
                                     <TableCell width="25%">
                                         <LocalHighlighter language='turtle'
                                                           text={item.short_focus_node}

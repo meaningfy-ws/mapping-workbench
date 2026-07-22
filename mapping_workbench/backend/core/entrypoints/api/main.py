@@ -1,14 +1,18 @@
 from fastapi import APIRouter, Depends
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 
+from mapping_workbench.backend.conceptual_mapping_group.entrypoints.api import routes as cm_groups_routes
 from mapping_workbench.backend.conceptual_mapping_rule.entrypoints.api import routes as conceptual_mapping_rule_routes
 from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.config.entrypoints.api import routes as config_routes
 from mapping_workbench.backend.core.entrypoints.api import routes as core_routes
-from mapping_workbench.backend.core.services.project_initilisers import init_project_models, init_admin_user
+from mapping_workbench.backend.core.services.project_initilisers import init_project_models, init_admin_user, \
+    init_api_admin_user
 from mapping_workbench.backend.database.adapters.mongodb import DB
+from mapping_workbench.backend.demo.entrypoints.api import routes as demo_routes
 from mapping_workbench.backend.fields_registry.entrypoints.api import routes as fields_registry
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.entrypoints.api import routes as mapping_package_routes
@@ -28,7 +32,7 @@ from mapping_workbench.backend.sparql_test_suite.entrypoints.api import routes a
 from mapping_workbench.backend.task_manager.entrypoints.api import routes as task_manager_routes
 from mapping_workbench.backend.tasks.entrypoints.api import routes as tasks_routes
 from mapping_workbench.backend.test_data_suite.entrypoints.api import routes as test_data_suite_routes
-from mapping_workbench.backend.conceptual_mapping_group.entrypoints.api import routes as cm_groups_routes
+from mapping_workbench.backend.tracking.entrypoints.api import routes as tracking_routes
 from mapping_workbench.backend.triple_map_fragment.entrypoints.api import \
     routes_for_generic as generic_triple_map_fragment_routes
 from mapping_workbench.backend.triple_map_fragment.entrypoints.api import \
@@ -36,7 +40,6 @@ from mapping_workbench.backend.triple_map_fragment.entrypoints.api import \
 from mapping_workbench.backend.triple_map_registry.entrypoints.api import routes as triple_map_registry_routes
 from mapping_workbench.backend.user.entrypoints.api import routes as user_routes
 from mapping_workbench.backend.xsd_schema.entrypoints.api import routes as xsd_schema_routes
-from mapping_workbench.backend.demo.entrypoints.api import routes as demo_routes
 
 ROOT_API_PATH = "/api/v1"
 
@@ -57,12 +60,18 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*']
 )
+app.add_middleware(
+    GZipMiddleware,
+    minimum_size=51200
+)  # compress responses >50KB
 
 
 @app.on_event("startup")
 async def on_startup():
     await init_project_models(mongodb_database=DB.get_database())
     await init_admin_user()
+    if settings.is_demo_env():
+        await init_api_admin_user()
 
 
 app_router = APIRouter()
@@ -98,7 +107,8 @@ secured_routers: list = [
     fields_registry.router,
     xsd_schema_routes.router,
     cm_groups_routes.router,
-    demo_routes.router
+    demo_routes.router,
+    tracking_routes.router
 ]
 
 for secured_router in secured_routers:

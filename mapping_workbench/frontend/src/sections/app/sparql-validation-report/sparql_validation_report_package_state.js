@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
@@ -6,30 +6,61 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import {ListTable} from "./list-table";
-import {ResultFilter} from '../mapping-package/state/utils';
+import {filterXPATHFieldsCoveredResults, mapSparqlResultEntry, ResultFilter} from '../mapping-package/state/utils';
 import useItemsSearch from "src/hooks/use-items-search";
 import {ResultSummaryCoverage} from './result-summary-coverage';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
+import {sparqlReportFiltersApi} from "../../../api/mapping-packages/reports/sparql/filters";
 
 const FILTER_VALUES = ["valid", "unverifiable", "warning", "invalid", "error", "unknown"]
-    .map(value => ({value: value + 'Count', label: value}))
+    .map(value => ({value: value, label: value}))
 
-const SparqlValidationReport = ({handleSelectFile, validationReport, handleExport}) => {
+const SparqlValidationReport = (
+    {handleSelectFile, validationReport, handleExport}) => {
     const [resultFilter, setResultFilter] = useState('')
+    const showSessMatchedXPATHsOnly = sparqlReportFiltersApi.getShowMatchedXPATHsOnly();
+    const [showMatchedXPATHsOnly, setShowMatchedXPATHsOnly] = useState(showSessMatchedXPATHsOnly)
+    const [filteredItems, setFilteredItems] = useState([]);
+    const [results, setResults] = useState([]);
 
-    console.log(resultFilter)
+    const [listItems, setListItems] = useState(validationReport);
 
-    const filteredItems = validationReport.filter((item) => !resultFilter || item[resultFilter] > 0)
+    useEffect(() => {
+        setListItems(validationReport);
+    }, [validationReport]);
 
-    const itemsSearch = useItemsSearch(filteredItems, sectionApi, [], {result: ''});
-    const handleResultFilterChange = e => setResultFilter(e.target.value)
+    useEffect(() => {
+            const fResults = filterXPATHFieldsCoveredResults(listItems, showMatchedXPATHsOnly);
+            setResults(fResults);
+            setFilteredItems(
+                fResults.reduce((acc, item) => {
+                    if (!resultFilter || (item?.result[resultFilter]?.count || 0) > 0) {
+                        mapSparqlResultEntry(item);
+                        acc.push(item);
+                    }
+                    return acc;
+                }, [])
+            )
+        }, [showMatchedXPATHsOnly, listItems, resultFilter]
+    )
+
+    const itemsSearch = useItemsSearch(filteredItems, sectionApi, [], {result: ''}, null, {
+        "nb_comments": "desc"
+    });
+    const handleResultFilterChange = e => {
+        setResultFilter(e.target.value);
+        itemsSearch.handleFilterResultChange();
+    }
 
     return (
         <>
             <Grid xs={12}
                   md={8}>
-                <ResultSummaryCoverage handleExport={handleExport}
-                                       validationReport={validationReport}/>
+                <ResultSummaryCoverage
+                    handleExport={handleExport}
+                    validationReport={results}
+                    setDispatchShowMatchedXPATHsOnly={setShowMatchedXPATHsOnly}
+                />
             </Grid>
             <Grid xs={12}>
                 <Paper>
@@ -39,7 +70,7 @@ const SparqlValidationReport = ({handleSelectFile, validationReport, handleExpor
                            sx={{mx: 3}}>
                         <Typography fontWeight='bold'>Assertions</Typography>
                         <ResultFilter values={FILTER_VALUES}
-                                      count={validationReport.length}
+                                      count={results.length}
                                       onStateChange={handleResultFilterChange}
                                       currentState={resultFilter}/>
                     </Stack>
@@ -57,6 +88,8 @@ const SparqlValidationReport = ({handleSelectFile, validationReport, handleExpor
                         resultFilter={resultFilter}
                         sectionApi={sectionApi}
                         handleSelectFile={handleSelectFile}
+                        updateItems={setListItems}
+                        listItems={itemsSearch.filteredItems}
                     />
                 </Paper>
             </Grid>

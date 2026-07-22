@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from saxonche import PyXdmItem
 
 from mapping_workbench.backend.package_validator.models.test_data_validation import TestDataValidationResult, \
@@ -10,6 +10,7 @@ from mapping_workbench.backend.package_validator.models.test_data_validation imp
 class XPathAssertionEntry(BaseModel):
     xpath: Optional[str] = None
     value: Optional[str] = None
+    element: Optional[str] = None
 
 
 class XPathAssertionTestDataEntry(ValidationTestDataEntry):
@@ -21,6 +22,7 @@ class XPathAssertionCondition(BaseModel):
     meets_xpath_condition: Optional[bool] = True
 
 class XPathAssertion(CMRuleSDKElement):
+    validation_element_id: Optional[str] = None
     test_data_xpaths: Optional[List[XPathAssertionTestDataEntry]] = None
     is_covered: Optional[bool] = False
     xpath_conditions: Optional[List[XPathAssertionCondition]] = None
@@ -31,10 +33,10 @@ class XPathAssertion(CMRuleSDKElement):
 
 
 class XPATHTestDataValidationResult(TestDataValidationResult):
-    results: Optional[List[XPathAssertion]] = []
+    results: Optional[List[XPathAssertion]] = Field(default_factory=list)
 
 
 class XPATHMatchingElements(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    xpath_assertions: List[XPathAssertionEntry] = [],
-    elements: List[PyXdmItem] = []
+    xpath_assertions: List[XPathAssertionEntry] = Field(default_factory=list),
+    elements: List[PyXdmItem] = Field(default_factory=list)

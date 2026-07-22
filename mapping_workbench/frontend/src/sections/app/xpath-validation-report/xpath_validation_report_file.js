@@ -30,7 +30,9 @@ const XpathValidationReportTest = ({sid, suiteId, testId, mappingSuiteIdentifier
             })
     }
 
-    const itemsSearch = useItemsSearch(validationReport, sectionApi);
+    const itemsSearch = useItemsSearch(validationReport, sectionApi, [], {}, null, {
+        "nb_comments": "desc"
+    });
 
     return (
         <>
@@ -57,6 +59,8 @@ const XpathValidationReportTest = ({sid, suiteId, testId, mappingSuiteIdentifier
                             onSort={itemsSearch.handleSort}
                             sort={itemsSearch.state.sort}
                             sectionApi={sectionApi}
+                            updateItems={setValidationReport}
+                            listItems={itemsSearch.filteredItems}
                         />
                     </TableLoadWrapper>
                 </Paper>

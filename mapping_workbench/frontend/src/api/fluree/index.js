@@ -110,41 +110,42 @@ class FlureeApi extends SectionApi {
                 "@id": "?s",
                 "ex:yetiSecret": "?secret"
             },
-            "select": ["?s","?secret"]
+            "select": ["?s", "?secret"]
         }
     }
 
     addData(secret) {
         return {
-             insert: [
-            {
-              '@id': 'ex:freddy',
-              '@type': 'ex:Yeti',
-              'ex:yetiSecret': secret,
-            }]
+            insert: [
+                {
+                    '@id': 'ex:freddy',
+                    '@type': 'ex:Yeti',
+                    'ex:yetiSecret': secret,
+                }]
         }
     }
 
-    deleteData(user,secret) {
+    deleteData(user, secret) {
         return {
             where: {
-             '@id': user,
-              'ex:yetiSecret': secret,
+                '@id': user,
+                'ex:yetiSecret': secret,
             },
-             delete:
-            {
-             '@id': user,
-              'ex:yetiSecret': secret,
-            }
+            delete:
+                {
+                    '@id': user,
+                    'ex:yetiSecret': secret,
+                }
         }
     }
 
-    async getItemsTree() {
+    async getItemsTree(wcm) {
         let filters = {}
         if (this.isProjectResource) {
             filters['project'] = sessionApi.getSessionProject();
         }
-        return await appApi.get(this.paths['elements_tree'], filters);
+        const path = `${this.paths['elements_tree']}${wcm ? '/wcm=1' : ''}`
+        return await appApi.get(path, filters);
     }
 }
 

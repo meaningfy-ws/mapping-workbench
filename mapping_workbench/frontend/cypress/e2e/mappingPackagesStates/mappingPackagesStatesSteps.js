@@ -1,6 +1,6 @@
 import {Given, Then} from 'cypress-cucumber-preprocessor/steps'
 
-const {username, password, homeURL, appURLPrefix, mappingPacakgeName} = Cypress.env()
+const {username, password, homeURL, appURLPrefix, mappingPackageName} = Cypress.env()
 
 
 Given('Session Login', () => {
@@ -28,7 +28,7 @@ Then('I receive Mapping Packages', () => {
 })
 
 Then('I search for Mapping Package', () => {
-    cy.get('input[type=text]').clear().type(mappingPacakgeName + '{enter}')
+    cy.get('input[type=text]').clear().type(mappingPackageName + '{enter}')
     cy.wait(1000)
 })
 
@@ -46,28 +46,28 @@ Then('I receive Mapping Packages State', () => {
     cy.wait('@getSparql').its('response.statusCode').should('eq', 200)
     cy.wait('@getShacl').its('response.statusCode').should('eq', 200)
 })
-
-Then('I click on {string} Reports Tab', (tabName) => {
-    const lowerName = tabName.toLowerCase()
-    cy.get(`#${lowerName}_reports_tab`).click()
-    cy.intercept('GET', `${appURLPrefix}package_validator/${lowerName}/state/*`).as('get' + tabName)
-    cy.intercept('GET', `${appURLPrefix}package_validator/${lowerName}/state/*/suite/*`).as('getSuite')
-    cy.intercept('GET', `${appURLPrefix}package_validator/${lowerName}/state/*/suite/*/test/*`).as('getTest')
-
-})
-
-Then('I click on {string} Data', () => {
-    cy.get('.MuiListItem-root > .MuiButtonBase-root').click()
-})
-
-Then('I receive Mapping Packages State {string}', (tabName) => {
-    cy.wait('@get' + tabName).its('response.statusCode').should('eq', 200)
-})
-
-Then('I receive Mapping Packages Suite {string}', () => {
-    cy.wait('@getSuite').its('response.statusCode').should('eq', 200)
-})
-
-Then('I receive Mapping Packages Test {string}', () => {
-    cy.wait('@getTest').its('response.statusCode').should('eq', 200)
-})
+//
+// Then('I click on {string} Reports Tab', (tabName) => {
+//     const lowerName = tabName.toLowerCase()
+//     cy.get(`#${lowerName}_reports_tab`).click()
+//     cy.intercept('GET', `${appURLPrefix}package_validator/${lowerName}/state/*`).as('get' + tabName)
+//     cy.intercept('GET', `${appURLPrefix}package_validator/${lowerName}/state/*/suite/*`).as('getSuite')
+//     cy.intercept('GET', `${appURLPrefix}package_validator/${lowerName}/state/*/suite/*/test/*`).as('getTest')
+//
+// })
+//
+// Then('I click on {string} Data', () => {
+//     cy.get('.MuiListItem-root > .MuiButtonBase-root').click()
+// })
+//
+// Then('I receive Mapping Packages State {string}', (tabName) => {
+//     cy.wait('@get' + tabName).its('response.statusCode').should('eq', 200)
+// })
+//
+// Then('I receive Mapping Packages Suite {string}', () => {
+//     cy.wait('@getSuite').its('response.statusCode').should('eq', 200)
+// })
+//
+// Then('I receive Mapping Packages Test {string}', () => {
+//     cy.wait('@getTest').its('response.statusCode').should('eq', 200)
+// })

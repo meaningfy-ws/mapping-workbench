@@ -6,7 +6,7 @@ export const APP_SETTINGS_KEY = 'app.settings';
 
 class SessionApi {
     getStorage() {
-        return sessionStorage;
+        return appApi.storage();
     }
 
     async setSessionProject(project) {

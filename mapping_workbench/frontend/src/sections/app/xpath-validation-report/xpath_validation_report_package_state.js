@@ -8,15 +8,24 @@ import {CoverageFilter} from "./utils";
 import ResultSummaryCoverage from './result-summary-coverage';
 import useItemsSearch from "src/hooks/use-items-search";
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
+import {useEffect, useState} from "react";
 
 
-const XpathValidationReport = ({validationReport, handleSelectFile, mappingSuiteIdentifier, handleExport}) => {
+const XpathValidationReport = ({validationReport, handleFolderAndFileChange, mappingSuiteIdentifier, handleExport}) => {
     const FILTER_VALUES = [{label: 'All', value: '', color: 'primary', count: validationReport.length},
         {label: 'Covered', value: true, color: 'info', count: validationReport.filter(e => e.is_covered).length},
         {label: 'Uncovered', value: false, color: 'warning', count: validationReport.filter(e => !e.is_covered).length}]
 
+    const [listItems, setListItems] = useState(validationReport);
 
-    const itemsSearch = useItemsSearch(validationReport, sectionApi, [], {is_covered: ''})
+    useEffect(() => {
+        setListItems(validationReport);
+    }, [validationReport]);
+
+    const itemsSearch = useItemsSearch(listItems, sectionApi, [], {is_covered: ''}, null, {
+        "nb_comments": "desc",
+        "notice_count": "desc"
+    })
 
     const handleCoverageFilterChange = e => itemsSearch.handleFiltersChange({is_covered: e})
 
@@ -26,7 +35,7 @@ const XpathValidationReport = ({validationReport, handleSelectFile, mappingSuite
                   md={8}>
                 <ResultSummaryCoverage identifier={mappingSuiteIdentifier}
                                        handleExport={handleExport}
-                                       validationReport={validationReport}/>
+                                       validationReport={listItems}/>
             </Grid>
             <Grid xs={12}>
                 <Paper>
@@ -50,8 +59,10 @@ const XpathValidationReport = ({validationReport, handleSelectFile, mappingSuite
                         sort={itemsSearch.state.sort}
                         onFilter={itemsSearch.handleFiltersChange}
                         filters={itemsSearch.state.filters}
-                        handleSelectFile={handleSelectFile}
+                        handleSelectFile={handleFolderAndFileChange}
                         sectionApi={sectionApi}
+                        updateItems={setListItems}
+                        listItems={itemsSearch.filteredItems}
                     />
                 </Paper>
             </Grid>

@@ -56,6 +56,7 @@ const Tag = ({
                  theme
              }) => {
     const shiftedParent = [...parent]
+
     if (shiftedParent.length)
         shiftedParent.shift()
     const nodeXPath = ['/*', ...shiftedParent, name].join('/')
@@ -79,7 +80,7 @@ const Tag = ({
                       backgroundColor: selectedNode && styless(isField ? 'field' : 'node', themeDark),
                   }}
                   className={styles.tag}
-                  onClick={() => handleClick([...parent, name])}>
+                  onClick={() => handleClick([...parent, name], isField)}>
                {name}
             </span>
             {attributes && <span name={'attributes'}>{Object.entries(attributes).map(([name, value]) =>
@@ -100,7 +101,7 @@ const Tag = ({
                       backgroundColor: selectedNode && styless(isField ? 'field' : 'node', themeDark)
                   }}
                   className={styles.tag}
-                  onClick={() => handleClick([...parent, name])}>
+                  onClick={() => handleClick([...parent, name], isField)}>
                {name}
             </span>
             <span>{'>'}</span>
@@ -110,11 +111,12 @@ const Tag = ({
 
 
 const BuildNodes = ({nodes, level = 0, parent = [], xPath, xPaths, relativeXPath, handleClick, theme}) => {
-    return nodes.map((e) => {
-            const [name, value] = e
+    return nodes.map((e, idx) => {
+            const [name, value] = e;
+            const key_suff =  name + '_' + level + '_' + idx;
             if (!isNaN(name))
                 return <BuildNodes nodes={Object.entries(value).filter(en => en[0] !== ATTRIBUTE_SIGN)}
-                                   key={'obj' + name}
+                                   key={'obj_' + key_suff}
                                    theme={theme}
                                    level={level}
                                    xPath={xPath}
@@ -125,7 +127,7 @@ const BuildNodes = ({nodes, level = 0, parent = [], xPath, xPaths, relativeXPath
             if (typeof value == "string")
                 if (name !== NAME_SIGH)
                     return (
-                        <Tag key={'tag' + name}
+                        <Tag key={'tag_' + key_suff}
                              name={name}
                              isField
                              parent={parent}
@@ -145,8 +147,23 @@ const BuildNodes = ({nodes, level = 0, parent = [], xPath, xPaths, relativeXPath
                                     {value}
                                 </span>
                             </span>
+            else if (Array.isArray(value)) {
+                let values = []
+                for (let i = 0; i < value.length; i++) {
+                    values[i] = [name, value[i]]
+                }
+                return <BuildNodes nodes={values}
+                                   key={'list_' + key_suff}
+                                   theme={theme}
+                                   level={level}
+                                   xPath={xPath}
+                                   xPaths={xPaths}
+                                   handleClick={handleClick}
+                                   relativeXPath={relativeXPath}
+                                   parent={parent}/>
+            }
             return (
-                <Tag key={'tag' + name}
+                <Tag key={'tag_' + key_suff}
                      name={name}
                      attributes={value?.[ATTRIBUTE_SIGN]}
                      parent={parent}
@@ -179,7 +196,7 @@ const File = ({xmlContent, fileContent, fileError, relativeXPath, xmlNodes, xPat
         if (fileContent && xmlContent && !fileError) {
             setXPathsInFile(executeXPaths(xmlContent, xPaths).map(e => e.resolved_xpath).filter(e => !['/*', ''].includes(e)))
         }
-    }, [xmlContent, fileContent, fileError])
+    }, [xmlContent, fileContent, fileError, xPaths])
 
     return (
         <>

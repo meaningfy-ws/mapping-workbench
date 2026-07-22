@@ -2,6 +2,7 @@ from typing import List
 
 from beanie import PydanticObjectId
 
+from mapping_workbench.backend.core.services.io import unique_hash
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState, MappingPackage
 from mapping_workbench.backend.mapping_package.services.data import get_mapping_package_state_ns_definitions
@@ -61,6 +62,11 @@ def aggregate_shacl_tests_summary(
         if idx < 0:
             summary_results.append(
                 SHACLValidationSummaryRow(
+                    validation_element_id=unique_hash(
+                        shacl_result_path.shacl_suite.shacl_suite_id,
+                        shacl_result_path.short_source_constraint_component,
+                        shacl_result_path.result_path
+                    ),
                     shacl_suite=shacl_result_path.shacl_suite,
                     result_path=shacl_result_path.result_path,
                     short_result_path=shacl_result_path.short_result_path,

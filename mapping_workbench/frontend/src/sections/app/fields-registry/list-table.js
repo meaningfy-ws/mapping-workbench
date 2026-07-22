@@ -237,6 +237,26 @@ export const ListTable = (props) => {
                                                                             py: 1.5
                                                                         }}
                                                                     />
+                                                                    {item.repeatable !== null && <PropertyListItem
+                                                                        label="Repeatable"
+                                                                        value={item.repeatable ? 'Yes' : 'No'}
+                                                                    />}
+                                                                    {item.value_type && <PropertyListItem
+                                                                        label="Type"
+                                                                        value={item.value_type}
+                                                                    />}
+                                                                    {item.legal_type && <PropertyListItem
+                                                                        label="Legal type"
+                                                                        value={item.legal_type}
+                                                                    />}
+                                                                    {item.privacy_code && <PropertyListItem
+                                                                        label="Privacy code"
+                                                                        value={item.privacy_code}
+                                                                    />}
+                                                                    {item.code_list_value_id && <PropertyListItem
+                                                                        label="Code list value"
+                                                                        value={item.code_list_value_id}
+                                                                    />}
                                                                 </PropertyList>
                                                             </Grid>
                                                         </Grid>

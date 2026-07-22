@@ -1,3 +1,4 @@
+import {useRouter} from 'next/router';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import FileList from '../mapping-package/state/file-list';
@@ -5,15 +6,19 @@ import {useFileNavigation} from '../mapping-package/state/utils';
 import XpathValidationReportTest from "./xpath_validation_report_file";
 import XpathValidationReport from "./xpath_validation_report_package_state";
 import XpathValidationReportSuite from "./xpath_validation_report_test_dataset";
+import {DataLoader} from "../../../components/app/loading/data-loader";
 
-const XpathValidationReportView = ({sid, reportTree, validationReport, handleExport}) => {
+const XpathValidationReportView = ({reportTree, validationReport, handleExport}) => {
+    const router = useRouter();
+    const {sid, packageid, datasetid} = router.query
+
     const {
         selectedPackageState,
         selectedTestDataset,
-        handleSetPackageState,
-        handleSetTestDataset,
         handleSetTestAndPackage
-    } = useFileNavigation(reportTree)
+    } = useFileNavigation(reportTree, 'xpath', packageid, datasetid)
+
+    if (!validationReport) return <DataLoader />
 
     return (
         <Grid container
@@ -25,30 +30,27 @@ const XpathValidationReportView = ({sid, reportTree, validationReport, handleExp
                           files={reportTree.test_data_suites}
                           selectedPackageState={selectedPackageState}
                           selectedTestDataset={selectedTestDataset}
-                          handleFolderChange={handleSetPackageState}
-                          handleFileChange={handleSetTestDataset}/>
+                          handleFolderAndFileChange={handleSetTestAndPackage}/>
             </Grid>
             {!selectedPackageState &&
-                <XpathValidationReport sid={sid}
-                                       handleExport={handleExport}
+                <XpathValidationReport handleExport={handleExport}
                                        validationReport={validationReport}
                                        files={reportTree.test_data_suites}
-                                       handleSelectFile={handleSetTestAndPackage}
+                                       handleFolderAndFileChange={handleSetTestAndPackage}
                                        mappingSuiteIdentifier={reportTree.identifier}/>
             }
             {selectedPackageState && !selectedTestDataset &&
                 <XpathValidationReportSuite sid={sid}
                                             handleExport={handleExport}
-                                            suiteId={selectedPackageState.oid}
-                                            files={selectedPackageState?.test_data_states}
-                                            handleSelectFile={handleSetTestAndPackage}
+                                            suiteId={selectedPackageState}
+                                            handleFolderAndFileChange={handleSetTestAndPackage}
                                             mappingSuiteIdentifier={reportTree.identifier}/>
             }
             {selectedPackageState && selectedTestDataset &&
                 <XpathValidationReportTest sid={sid}
                                            handleExport={handleExport}
-                                           suiteId={selectedPackageState.oid}
-                                           testId={selectedTestDataset.oid}
+                                           suiteId={selectedPackageState}
+                                           testId={selectedTestDataset}
                                            mappingSuiteIdentifier={reportTree.identifier}/>
             }
         </Grid>

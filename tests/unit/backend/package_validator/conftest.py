@@ -62,7 +62,8 @@ def dummy_cm_rule_states():
             source_structural_element=StructuralElementState(
                 id="dummy_id1",
                 sdk_element_id="ND-ContractingParty",
-                absolute_xpath="/*/cac:ContractingParty"
+                absolute_xpath="/*/cac:ContractingParty",
+                relative_xpath=""
             ),
             xpath_condition="/*/cbc:NoticeTypeCode/@listName='competition' or exists(/*/ext:UBLExtensions/ext:UBLExtension/ext:ExtensionContent/efext:EformsExtension/efac:NoticeSubType/cbc:SubTypeCode[contains('10 11 12 13 14 15 16 17 18 19 20 21 22 23 24', text())]) or exists(/ContractNotice)"
         ),
@@ -70,7 +71,8 @@ def dummy_cm_rule_states():
             source_structural_element=StructuralElementState(
                 id="dummy_id2",
                 sdk_element_id="OPT-030-Procedure-SProvider",
-                absolute_xpath="/*/cac:ContractingParty/cac:Party/cac:ServiceProviderParty/cbc:ServiceTypeCode"
+                absolute_xpath="/*/cac:ContractingParty/cac:Party/cac:ServiceProviderParty/cbc:ServiceTypeCode",
+                relative_xpath="cbc:ServiceTypeCode"
             ),
             xpath_condition="cbc:ServiceTypeCode[@listName='organisation-role']/text()='ted-esen'"
         ),
@@ -78,9 +80,55 @@ def dummy_cm_rule_states():
             source_structural_element=StructuralElementState(
                 id="dummy_id3",
                 sdk_element_id="BT-01-notice",
-                absolute_xpath="/*/cbc:RegulatoryDomain"
+                absolute_xpath="/*/cbc:RegulatoryDomain",
+                relative_xpath=""
             ),
             xpath_condition=None
+        ),
+        ConceptualMappingRuleState(
+            source_structural_element=StructuralElementState(
+                id="dummy_id4",
+                sdk_element_id="OPT-030-Procedure-SProvider",
+                absolute_xpath="/*/cac:ContractingParty/cac:Party/cac:ServiceProviderParty/cac:Party/cac:PartyIdentification",
+                relative_xpath="cac:Party/cac:PartyIdentification"
+            ),
+            xpath_condition="cac:Party/cac:PartyIdentification/cbc:ID[@schemeName='organization']/text()='ORG-0007'"
+        ),
+        ConceptualMappingRuleState(
+            source_structural_element=StructuralElementState(
+                id="dummy_id5",
+                sdk_element_id="OPT-NaN",
+                absolute_xpath="/*/cac:ContractingParty/cac:Party/cac:ServiceProviderParty/cac:Party/cac:PartyIdentification-NaN",
+                relative_xpath="cac:PartyIdentification-NaN"
+            ),
+            xpath_condition="cac:Party/cac:PartyIdentification/cbc:ID[@schemeName='organization']/text()='ORG-0007'"
+        ),
+        ConceptualMappingRuleState(
+            source_structural_element=StructuralElementState(
+                id="dummy_id6",
+                sdk_element_id="OPT-030-Cond-False",
+                absolute_xpath="/*/cac:ContractingParty/cac:Party/cac:ServiceProviderParty",
+                relative_xpath="cac:Party/cac:ServiceProviderParty"
+            ),
+            xpath_condition="cac:ContractingActivity/cbc:ActivityTypeCode[@listName='authority-activity']/text()='econ-aff-NaN'"
+        ),
+        ConceptualMappingRuleState(
+            source_structural_element=StructuralElementState(
+                id="dummy_id7",
+                sdk_element_id="OPT-030-Rel-Cond",
+                absolute_xpath="/*/cac:ContractingParty/cbc:BuyerProfileURI",
+                relative_xpath="cbc:BuyerProfileURI"
+            ),
+            xpath_condition="../cbc:NoticeLanguageCode/text()='ENG'"
+        ),
+        ConceptualMappingRuleState(
+            source_structural_element=StructuralElementState(
+                id="dummy_id8",
+                sdk_element_id="OPT-030-Rel-Cond",
+                absolute_xpath="/*/cac:ContractingParty/cbc:BuyerProfileURI",
+                relative_xpath="cbc:BuyerProfileURI"
+            ),
+            xpath_condition="../cbc:NoticeLanguageCode/text()='RO'"
         )
     ]
 
@@ -119,8 +167,10 @@ def dummy_sparql_test_suite(sparql_test_resources_file_path: pathlib.Path,
         eforms_sdk_element_id=None,
         eforms_sdk_element_title=metadata['title']
     )
+    query = sparql_test_resources_file_path.read_text(encoding="utf-8")
     return SPARQLTestState(
-        content=sparql_test_resources_file_path.read_text(encoding="utf-8"),
+        content=query,
+        query=query,
         filename=sparql_test_resources_file_path.name,
         format=SPARQLTestFileResourceFormat.RQ,
         cm_rule=cm_rule_sdk_element

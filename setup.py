@@ -2,7 +2,7 @@
 
 """ """
 
-__version__ = "0.1.0"
+__version__ = "1.2.0"
 
 import pathlib
 
@@ -62,7 +62,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "reset_demo_data = mapping_workbench.backend.demo.entrypoints.cli.cmd_reset_demo_data:main",
+            # "reset_demo_data = mapping_workbench.backend.demo.entrypoints.cli.cmd_reset_demo_data:main",
         ],
     },
     include_package_data=True,
